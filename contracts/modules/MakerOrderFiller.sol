@@ -15,8 +15,6 @@ struct MakerOrder {
     uint256 deadline;
 }
 
-// error EmbededError(uint256 errorCode);
-
 /// @title Filler for MakerOrder
 abstract contract MakerOrderFiller is Permit2Payments {
 
@@ -34,13 +32,6 @@ abstract contract MakerOrderFiller is Permit2Payments {
 
     string private constant TOKEN_PERMISSIONS_TYPE = "TokenPermissions(address token,uint256 amount)";
     string internal constant PERMIT2_ORDER_TYPE = string(abi.encodePacked("MakerOrder witness)", ORDER_TYPE, TOKEN_PERMISSIONS_TYPE));
-
-    /// @dev Permit2 address
-    ISignatureTransfer internal immutable PERMIT2;
-
-    constructor(address permit2) {
-        PERMIT2 = ISignatureTransfer(permit2);
-    }
 
     /// @notice hash the given order
     /// @param order the order to hash
@@ -70,12 +61,13 @@ abstract contract MakerOrderFiller is Permit2Payments {
         address recipient,
         uint256 amountIn,
         MakerOrder memory makerOrder,
-        bytes memory signature
+        bytes calldata signature
     ) internal {
-        payOrPermit2Transfer(makerOrder.takerToken, payer, recipient, amountIn);
+        payOrPermit2Transfer(makerOrder.takerToken, payer, makerOrder.maker, amountIn);
 
         uint256 amountOut = amountIn * makerOrder.makerAmount / makerOrder.takerAmount;
-        PERMIT2.permitWitnessTransferFrom(
+
+        ISignatureTransfer(address(PERMIT2)).permitWitnessTransferFrom(
             ISignatureTransfer.PermitTransferFrom({
                 permitted: ISignatureTransfer.TokenPermissions({
                     token: makerOrder.makerToken,
@@ -90,6 +82,5 @@ abstract contract MakerOrderFiller is Permit2Payments {
             PERMIT2_ORDER_TYPE,
             signature
         );
-        // revert EmbededError(amountOutMinimum);
     }
 }

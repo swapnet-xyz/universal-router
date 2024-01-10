@@ -379,7 +379,6 @@ abstract contract Dispatcher is NFTImmutables, Payments, V2SwapRouter, V3SwapRou
                     uint256 takerAmount;
                     uint256 nonce;
                     uint256 deadline;
-                    bytes signature;
                     assembly {
                         recipient := calldataload(inputs.offset)
                         amountIn := calldataload(add(inputs.offset, 0x20))
@@ -391,9 +390,9 @@ abstract contract Dispatcher is NFTImmutables, Payments, V2SwapRouter, V3SwapRou
                         takerAmount := calldataload(add(inputs.offset, 0xe0))
                         nonce := calldataload(add(inputs.offset, 0x100))
                         deadline := calldataload(add(inputs.offset, 0x120))
-                        signature := calldataload(add(inputs.offset, 0x140))
                     }
                     address payer = payerIsUser ? lockedBy : address(this);
+                    bytes calldata signature = inputs.toBytes(10);
                     fill(
                         payer,
                         map(recipient),
