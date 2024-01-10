@@ -18,36 +18,21 @@ struct MakerOrder {
 /// @title Filler for MakerOrder
 abstract contract MakerOrderFiller is Permit2Payments {
 
-    bytes internal constant ORDER_TYPE = abi.encodePacked(
-        "MakerOrder(",
-        "address makerToken,",
+    bytes internal constant ORDER_WITNESS_TYPE = abi.encodePacked(
+        "MakerOrderWitness(",
         "address takerToken,",
-        "address maker,",
-        "uint256 makerAmount,",
-        "uint256 takerAmount,",
-        "uint256 nonce,",
-        "uint256 deadline)"
+        "uint256 takerAmount)"
     );
-    bytes32 internal constant ORDER_TYPE_HASH = keccak256(ORDER_TYPE);
+    bytes32 internal constant ORDER_WITNESS_TYPE_HASH = keccak256(ORDER_WITNESS_TYPE);
 
     string private constant TOKEN_PERMISSIONS_TYPE = "TokenPermissions(address token,uint256 amount)";
-    string internal constant PERMIT2_ORDER_TYPE = string(abi.encodePacked("MakerOrder witness)", ORDER_TYPE, TOKEN_PERMISSIONS_TYPE));
+    string internal constant PERMIT2_ORDER_WITNESS_TYPE = string(abi.encodePacked("MakerOrderWitness witness)", ORDER_WITNESS_TYPE, TOKEN_PERMISSIONS_TYPE));
 
-    /// @notice hash the given order
-    /// @param order the order to hash
+    /// @notice hash the given order witness
     /// @return the eip-712 order hash
-    function hash(MakerOrder memory order) internal pure returns (bytes32) {
+    function hash(address takerToken, uint256 takerAmount) internal pure returns (bytes32) {
         return keccak256(
-            abi.encode(
-                ORDER_TYPE_HASH,
-                order.makerToken,
-                order.takerToken,
-                order.maker,
-                order.makerAmount,
-                order.takerAmount,
-                order.nonce,
-                order.deadline
-            )
+            abi.encode(ORDER_WITNESS_TYPE_HASH, takerToken, takerAmount)
         );
     }
 
@@ -78,8 +63,8 @@ abstract contract MakerOrderFiller is Permit2Payments {
             }),
             ISignatureTransfer.SignatureTransferDetails({to: recipient, requestedAmount: amountOut}),
             makerOrder.maker,
-            hash(makerOrder),
-            PERMIT2_ORDER_TYPE,
+            hash(makerOrder.takerToken, makerOrder.takerAmount),
+            PERMIT2_ORDER_WITNESS_TYPE,
             signature
         );
     }

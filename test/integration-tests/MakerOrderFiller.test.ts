@@ -82,26 +82,16 @@ describe('Maker order filler tests:', () => {
       permit2.address,
       chainId,
       {
-        witnessTypeName: 'MakerOrder',
+        witnessTypeName: 'MakerOrderWitness',
         witnessType: {
-          MakerOrder: [
-            { name: 'makerToken', type: 'address' },
+          MakerOrderWitness: [
             { name: 'takerToken', type: 'address' },
-            { name: 'maker', type: 'address' },
-            { name: 'makerAmount', type: 'uint256' },
             { name: 'takerAmount', type: 'uint256' },
-            { name: 'nonce', type: 'uint256' },
-            { name: 'deadline', type: 'uint256' },
           ]
         },
         witness: {
-          makerToken: makerTokenContract.address,
           takerToken: takerTokenContract.address,
-          maker: maker.address,
-          makerAmount: makerAmount.toString(),
           takerAmount: takerAmount.toString(),
-          nonce,
-          deadline: DEADLINE,
         },
       }
     );
