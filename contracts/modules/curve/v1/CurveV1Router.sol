@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity ^0.8.17;
 
+import {Constants} from '../../../libraries/Constants.sol';
 import {ERC20} from 'solmate/src/tokens/ERC20.sol';
 
 interface ICurveV1Pool {
@@ -40,6 +41,10 @@ abstract contract CurveV1Router {
             if (i >= 0 && j >= 0) {
                 break;
             }
+        }
+
+        if (amountIn == Constants.CONTRACT_BALANCE) {
+            amountIn = ERC20(inputTokenAddress).balanceOf(address(this));
         }
 
         uint256 allowance = ERC20(inputTokenAddress).allowance(address(this), curveV1PoolAddress);
