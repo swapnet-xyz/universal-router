@@ -408,6 +408,26 @@ abstract contract Dispatcher is NFTImmutables, Payments, V2SwapRouter, V3SwapRou
                         }),
                         signature
                     );
+            } else if (command == Commands.WRAP_FEW_TOKEN) {
+                    address token;
+                    address recipient;
+                    uint256 amount;
+                    assembly {
+                        token := calldataload(inputs.offset)
+                        recipient := calldataload(add(inputs.offset, 0x20))
+                        amount := calldataload(add(inputs.offset, 0x40))
+                    }
+                    Payments.wrapFewToken(token, map(recipient), amount);
+                } else if (command == Commands.UNWRAP_FEW_TOKEN) {
+                    address wrappedToken;
+                    address recipient;
+                    uint256 amountMin;
+                    assembly {
+                        wrappedToken := calldataload(inputs.offset)
+                        recipient := calldataload(add(inputs.offset, 0x20))
+                        amountMin := calldataload(add(inputs.offset, 0x40))
+                    }
+                    Payments.unwrapFewToken(wrappedToken, map(recipient), amountMin);
             } else {
                 // placeholder area for commands 0x25-0x3f
                 revert InvalidCommandType(command);

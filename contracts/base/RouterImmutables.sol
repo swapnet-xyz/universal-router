@@ -4,6 +4,7 @@ pragma solidity ^0.8.17;
 struct RouterParameters {
     address permit2;
     address weth9;
+    address fewFactory;
     address seaportV1_5;
     address seaportV1_4;
     address openseaConduit;
