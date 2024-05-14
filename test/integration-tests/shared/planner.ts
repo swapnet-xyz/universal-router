@@ -43,11 +43,9 @@ export enum CommandType {
   SEAPORT_V1_4 = 0x20,
   EXECUTE_SUB_PLAN = 0x21,
   APPROVE_ERC20 = 0x22,
-  WRAP_STETH = 0x23,
-  UNWRAP_STETH = 0x24,
 
   // Added by SwapNet protocol
-  CURVE_V1 = 0x25,
+  CURVE_V1 = 0x23,
 }
 
 const ALLOW_REVERT_FLAG = 0x80
