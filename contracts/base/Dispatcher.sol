@@ -368,7 +368,7 @@ abstract contract Dispatcher is NFTImmutables, Payments, V2SwapRouter, V3SwapRou
                     }
                     curveV1Exchange(poolAddress, inputTokenAddress, outputTokenAddress, amountIn, amountOutMin);
                 } else {
-                // placeholder area for commands 0x25-0x3f
+                // placeholder area for commands 0x23-0x3f
                 revert InvalidCommandType(command);
             }
         }
