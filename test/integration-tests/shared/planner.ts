@@ -48,17 +48,6 @@ export enum CommandType {
 
   // Added by SwapNet protocol
   CURVE_V1 = 0x25,
-  CURVE_V2 = 0x26,
-  DODO_V1 = 0x27,
-  DODO_V2 = 0x28,
-  BALANCER_V1 = 0x29,
-  BALANCER_V2 = 0x2a,
-  PLACEHOLDER_1 = 0x2b,
-  PLACEHOLDER_2 = 0x2c,
-  PLACEHOLDER_3 = 0x2d,
-  PLACEHOLDER_4 = 0x2e,
-  PLACEHOLDER_5 = 0x2f,
-  PLACEHOLDER_6 = 0x30,
 }
 
 const ALLOW_REVERT_FLAG = 0x80
@@ -131,17 +120,6 @@ const ABI_DEFINITION: { [key in CommandType]: string[] } = {
 
   // Added by SwapNet protocol
   [CommandType.CURVE_V1]: ['address', 'address', 'address', 'uint256', 'uint256'],
-  [CommandType.CURVE_V2]: [],
-  [CommandType.DODO_V1]: [],
-  [CommandType.DODO_V2]: [],
-  [CommandType.BALANCER_V1]: [],
-  [CommandType.BALANCER_V2]: [],
-  [CommandType.PLACEHOLDER_1]: [],
-  [CommandType.PLACEHOLDER_2]: [],
-  [CommandType.PLACEHOLDER_3]: [],
-  [CommandType.PLACEHOLDER_4]: [],
-  [CommandType.PLACEHOLDER_5]: [],
-  [CommandType.PLACEHOLDER_6]: [],
 }
 
 export class RoutePlanner {

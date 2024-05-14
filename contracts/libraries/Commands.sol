@@ -75,15 +75,4 @@ library Commands {
 
     // COMMAND_PLACEHOLDER for 0x25 to 0x3f (all unused)
     uint256 constant CURVE_V1 = 0x25;
-    uint256 constant CURVE_V2 = 0x26;
-    uint256 constant DODO_V1 = 0x27;
-    uint256 constant DODO_V2 = 0x28;
-    uint256 constant BALANCER_V1 = 0x29;
-    uint256 constant BALANCER_V2 = 0x2a;
-    uint256 constant PLACEHOLDER_1 = 0x2b;
-    uint256 constant PLACEHOLDER_2 = 0x2c;
-    uint256 constant PLACEHOLDER_3 = 0x2d;
-    uint256 constant PLACEHOLDER_4 = 0x2e;
-    uint256 constant PLACEHOLDER_5 = 0x2f;
-    uint256 constant PLACEHOLDER_6 = 0x30;
 }
