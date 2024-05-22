@@ -45,37 +45,45 @@ abstract contract Dispatcher is NFTImmutables, Payments, V2SwapRouter, V3SwapRou
                 // 0x00 <= command < 0x08
                 if (command < Commands.FIRST_IF_BOUNDARY) {
                     if (command == Commands.V3_SWAP_EXACT_IN) {
-                        // equivalent: abi.decode(inputs, (address, uint256, uint256, bytes, bool))
+                        // equivalent: abi.decode(inputs, (address, uint256, uint256, bytes, bool, bytes32, address))
                         address recipient;
                         uint256 amountIn;
                         uint256 amountOutMin;
                         bool payerIsUser;
+                        bytes32 v3PoolInitCodeHash;
+                        address v3Factory;
                         assembly {
                             recipient := calldataload(inputs.offset)
                             amountIn := calldataload(add(inputs.offset, 0x20))
                             amountOutMin := calldataload(add(inputs.offset, 0x40))
                             // 0x60 offset is the path, decoded below
                             payerIsUser := calldataload(add(inputs.offset, 0x80))
+                            v3PoolInitCodeHash := calldataload(add(inputs.offset, 0xa0))
+                            v3Factory := calldataload(add(inputs.offset, 0xc0))
                         }
                         bytes calldata path = inputs.toBytes(3);
                         address payer = payerIsUser ? lockedBy : address(this);
-                        v3SwapExactInput(map(recipient), amountIn, amountOutMin, path, payer);
+                        v3SwapExactInput(v3PoolInitCodeHash, v3Factory, map(recipient), amountIn, amountOutMin, path, payer);
                     } else if (command == Commands.V3_SWAP_EXACT_OUT) {
-                        // equivalent: abi.decode(inputs, (address, uint256, uint256, bytes, bool))
+                        // equivalent: abi.decode(inputs, (address, uint256, uint256, bytes, bool, bytes32, address))
                         address recipient;
                         uint256 amountOut;
                         uint256 amountInMax;
                         bool payerIsUser;
+                        bytes32 v3PoolInitCodeHash;
+                        address v3Factory;
                         assembly {
                             recipient := calldataload(inputs.offset)
                             amountOut := calldataload(add(inputs.offset, 0x20))
                             amountInMax := calldataload(add(inputs.offset, 0x40))
                             // 0x60 offset is the path, decoded below
                             payerIsUser := calldataload(add(inputs.offset, 0x80))
+                            v3PoolInitCodeHash := calldataload(add(inputs.offset, 0xa0))
+                            v3Factory := calldataload(add(inputs.offset, 0xc0))
                         }
                         bytes calldata path = inputs.toBytes(3);
                         address payer = payerIsUser ? lockedBy : address(this);
-                        v3SwapExactOutput(map(recipient), amountOut, amountInMax, path, payer);
+                        v3SwapExactOutput(v3PoolInitCodeHash, v3Factory, map(recipient), amountOut, amountInMax, path, payer);
                     } else if (command == Commands.PERMIT2_TRANSFER_FROM) {
                         // equivalent: abi.decode(inputs, (address, address, uint160))
                         address token;
@@ -132,37 +140,45 @@ abstract contract Dispatcher is NFTImmutables, Payments, V2SwapRouter, V3SwapRou
                     // 0x08 <= command < 0x10
                 } else {
                     if (command == Commands.V2_SWAP_EXACT_IN) {
-                        // equivalent: abi.decode(inputs, (address, uint256, uint256, bytes, bool))
+                        // equivalent: abi.decode(inputs, (address, uint256, uint256, bytes, bool, bytes32, address))
                         address recipient;
                         uint256 amountIn;
                         uint256 amountOutMin;
                         bool payerIsUser;
+                        bytes32 v2PairInitCodeHash;
+                        address v2Factory;
                         assembly {
                             recipient := calldataload(inputs.offset)
                             amountIn := calldataload(add(inputs.offset, 0x20))
                             amountOutMin := calldataload(add(inputs.offset, 0x40))
                             // 0x60 offset is the path, decoded below
                             payerIsUser := calldataload(add(inputs.offset, 0x80))
+                            v2PairInitCodeHash := calldataload(add(inputs.offset, 0xa0))
+                            v2Factory := calldataload(add(inputs.offset, 0xc0))
                         }
                         address[] calldata path = inputs.toAddressArray(3);
                         address payer = payerIsUser ? lockedBy : address(this);
-                        v2SwapExactInput(map(recipient), amountIn, amountOutMin, path, payer);
+                        v2SwapExactInput(v2PairInitCodeHash, v2Factory, map(recipient), amountIn, amountOutMin, path, payer);
                     } else if (command == Commands.V2_SWAP_EXACT_OUT) {
-                        // equivalent: abi.decode(inputs, (address, uint256, uint256, bytes, bool))
+                        // equivalent: abi.decode(inputs, (address, uint256, uint256, bytes, bool, bytes32, address))
                         address recipient;
                         uint256 amountOut;
                         uint256 amountInMax;
                         bool payerIsUser;
+                        bytes32 v2PairInitCodeHash;
+                        address v2Factory;
                         assembly {
                             recipient := calldataload(inputs.offset)
                             amountOut := calldataload(add(inputs.offset, 0x20))
                             amountInMax := calldataload(add(inputs.offset, 0x40))
                             // 0x60 offset is the path, decoded below
                             payerIsUser := calldataload(add(inputs.offset, 0x80))
+                            v2PairInitCodeHash := calldataload(add(inputs.offset, 0xa0))
+                            v2Factory := calldataload(add(inputs.offset, 0xc0))
                         }
                         address[] calldata path = inputs.toAddressArray(3);
                         address payer = payerIsUser ? lockedBy : address(this);
-                        v2SwapExactOutput(map(recipient), amountOut, amountInMax, path, payer);
+                        v2SwapExactOutput(v2PairInitCodeHash, v2Factory, map(recipient), amountOut, amountInMax, path, payer);
                     } else if (command == Commands.PERMIT2_PERMIT) {
                         // equivalent: abi.decode(inputs, (IAllowanceTransfer.PermitSingle, bytes))
                         IAllowanceTransfer.PermitSingle calldata permitSingle;
