@@ -37,7 +37,10 @@ abstract contract V3SwapRouter is UniswapImmutables, Permit2Payments, IUniswapV3
     /// @dev The maximum value that can be returned from #getSqrtRatioAtTick. Equivalent to getSqrtRatioAtTick(MAX_TICK)
     uint160 internal constant MAX_SQRT_RATIO = 1461446703485210103287273052203988822378723970342;
 
-    function uniswapV3SwapCallback(bytes32 v3PoolInitCodeHash, address v3Factory, int256 amount0Delta, int256 amount1Delta, bytes calldata data) external {
+    bytes32 internal v3PoolInitCodeHash;
+    address internal v3Factory;
+
+    function uniswapV3SwapCallback(int256 amount0Delta, int256 amount1Delta, bytes calldata data) external {
         if (amount0Delta <= 0 && amount1Delta <= 0) revert V3InvalidSwap(); // swaps entirely within 0-liquidity regions are not supported
         (, address payer) = abi.decode(data, (bytes, address));
         bytes calldata path = data.toBytes(0);
@@ -58,7 +61,7 @@ abstract contract V3SwapRouter is UniswapImmutables, Permit2Payments, IUniswapV3
             if (path.hasMultiplePools()) {
                 // this is an intermediate step so the payer is actually this contract
                 path = path.skipToken();
-                _swap(v3PoolInitCodeHash, v3Factory, -amountToPay.toInt256(), msg.sender, path, payer, false);
+                _swap(-amountToPay.toInt256(), msg.sender, path, payer, false);
             } else {
                 if (amountToPay > maxAmountInCached) revert V3TooMuchRequested();
                 // note that because exact output swaps are executed in reverse order, tokenOut is actually tokenIn
@@ -68,22 +71,24 @@ abstract contract V3SwapRouter is UniswapImmutables, Permit2Payments, IUniswapV3
     }
 
     /// @notice Performs a Uniswap v3 exact input swap
-    /// @param v3PoolInitCodeHash The init code hash of v3 pool
-    /// @param v3Factory The address of v3 factory
+    /// @param v3PoolInitCodeHash_ The init code hash of v3 pool
+    /// @param v3Factory_ The address of v3 factory
     /// @param recipient The recipient of the output tokens
     /// @param amountIn The amount of input tokens for the trade
     /// @param amountOutMinimum The minimum desired amount of output tokens
     /// @param path The path of the trade as a bytes string
     /// @param payer The address that will be paying the input
     function v3SwapExactInput(
-        bytes32 v3PoolInitCodeHash,
-        address v3Factory,
+        bytes32 v3PoolInitCodeHash_,
+        address v3Factory_,
         address recipient,
         uint256 amountIn,
         uint256 amountOutMinimum,
         bytes calldata path,
         address payer
     ) internal {
+        v3PoolInitCodeHash = v3PoolInitCodeHash_;
+        v3Factory = v3Factory_;
         // use amountIn == Constants.CONTRACT_BALANCE as a flag to swap the entire balance of the contract
         if (amountIn == Constants.CONTRACT_BALANCE) {
             address tokenIn = path.decodeFirstToken();
@@ -96,8 +101,6 @@ abstract contract V3SwapRouter is UniswapImmutables, Permit2Payments, IUniswapV3
 
             // the outputs of prior swaps become the inputs to subsequent ones
             (int256 amount0Delta, int256 amount1Delta, bool zeroForOne) = _swap(
-                v3PoolInitCodeHash,
-                v3Factory,
                 amountIn.toInt256(),
                 hasMultiplePools ? address(this) : recipient, // for intermediate swaps, this contract custodies
                 path.getFirstPool(), // only the first pool is needed
@@ -121,25 +124,27 @@ abstract contract V3SwapRouter is UniswapImmutables, Permit2Payments, IUniswapV3
     }
 
     /// @notice Performs a Uniswap v3 exact output swap
-    /// @param v3PoolInitCodeHash The init code hash of v3 pool
-    /// @param v3Factory The address of v3 factory
+    /// @param v3PoolInitCodeHash_ The init code hash of v3 pool
+    /// @param v3Factory_ The address of v3 factory
     /// @param recipient The recipient of the output tokens
     /// @param amountOut The amount of output tokens to receive for the trade
     /// @param amountInMaximum The maximum desired amount of input tokens
     /// @param path The path of the trade as a bytes string
     /// @param payer The address that will be paying the input
     function v3SwapExactOutput(
-        bytes32 v3PoolInitCodeHash,
-        address v3Factory,
+        bytes32 v3PoolInitCodeHash_,
+        address v3Factory_,
         address recipient,
         uint256 amountOut,
         uint256 amountInMaximum,
         bytes calldata path,
         address payer
     ) internal {
+        v3PoolInitCodeHash = v3PoolInitCodeHash_;
+        v3Factory = v3Factory_;
         maxAmountInCached = amountInMaximum;
         (int256 amount0Delta, int256 amount1Delta, bool zeroForOne) =
-            _swap(v3PoolInitCodeHash, v3Factory, -amountOut.toInt256(), recipient, path, payer, false);
+            _swap(-amountOut.toInt256(), recipient, path, payer, false);
 
         uint256 amountOutReceived = zeroForOne ? uint256(-amount1Delta) : uint256(-amount0Delta);
 
@@ -150,7 +155,7 @@ abstract contract V3SwapRouter is UniswapImmutables, Permit2Payments, IUniswapV3
 
     /// @dev Performs a single swap for both exactIn and exactOut
     /// For exactIn, `amount` is `amountIn`. For exactOut, `amount` is `-amountOut`
-    function _swap(bytes32 v3PoolInitCodeHash, address v3Factory, int256 amount, address recipient, bytes calldata path, address payer, bool isExactIn)
+    function _swap(int256 amount, address recipient, bytes calldata path, address payer, bool isExactIn)
         private
         returns (int256 amount0Delta, int256 amount1Delta, bool zeroForOne)
     {
@@ -158,7 +163,7 @@ abstract contract V3SwapRouter is UniswapImmutables, Permit2Payments, IUniswapV3
 
         zeroForOne = isExactIn ? tokenIn < tokenOut : tokenOut < tokenIn;
 
-        (amount0Delta, amount1Delta) = IUniswapV3Pool(computePoolAddress(v3PoolInitCodeHash, v3Factory, tokenIn, tokenOut, fee)).swap(
+        (amount0Delta, amount1Delta) = IUniswapV3Pool(computePoolAddress(tokenIn, tokenOut, fee)).swap(
             recipient,
             zeroForOne,
             amount,
@@ -167,7 +172,7 @@ abstract contract V3SwapRouter is UniswapImmutables, Permit2Payments, IUniswapV3
         );
     }
 
-    function computePoolAddress(bytes32 v3PoolInitCodeHash, address v3Factory, address tokenA, address tokenB, uint24 fee) private view returns (address pool) {
+    function computePoolAddress(address tokenA, address tokenB, uint24 fee) private view returns (address pool) {
         if (tokenA > tokenB) (tokenA, tokenB) = (tokenB, tokenA);
         pool = address(
             uint160(
