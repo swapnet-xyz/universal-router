@@ -370,80 +370,77 @@ abstract contract Dispatcher is NFTImmutables, Payments, V2SwapRouter, V3SwapRou
                 }
                 Payments.approveERC20(token, spender);
             } else if (command == Commands.CURVE_V1) {
-                    // equivalent: abi.decode(inputs, (address, address, address, uint256, uint256))
-                    address poolAddress;
-                    address inputTokenAddress;
-                    address outputTokenAddress;
-                    uint256 amountIn;
-                    uint256 amountOutMin;
-                    assembly {
-                        poolAddress := calldataload(inputs.offset)
-                        inputTokenAddress := calldataload(add(inputs.offset, 0x20))
-                        outputTokenAddress := calldataload(add(inputs.offset, 0x40))
-                        amountIn := calldataload(add(inputs.offset, 0x60))
-                        amountOutMin := calldataload(add(inputs.offset, 0x80))
-                    }
-                    curveV1Exchange(poolAddress, inputTokenAddress, outputTokenAddress, amountIn, amountOutMin);
+                // equivalent: abi.decode(inputs, (address, address, address, uint256, uint256))
+                address poolAddress;
+                address inputTokenAddress;
+                address outputTokenAddress;
+                uint256 amountIn;
+                uint256 amountOutMin;
+                assembly {
+                    poolAddress := calldataload(inputs.offset)
+                    inputTokenAddress := calldataload(add(inputs.offset, 0x20))
+                    outputTokenAddress := calldataload(add(inputs.offset, 0x40))
+                    amountIn := calldataload(add(inputs.offset, 0x60))
+                    amountOutMin := calldataload(add(inputs.offset, 0x80))
+                }
+                curveV1Exchange(poolAddress, inputTokenAddress, outputTokenAddress, amountIn, amountOutMin);
             } else if (command == Commands.MAKER_ORDER) {
-                    address recipient;
-                    uint256 amountIn;
-                    bool payerIsUser;
-                    address makerToken;
-                    address takerToken;
-                    address maker;
-                    uint256 makerAmount;
-                    uint256 takerAmount;
-                    uint256 nonce;
-                    uint256 deadline;
-                    assembly {
-                        recipient := calldataload(inputs.offset)
-                        amountIn := calldataload(add(inputs.offset, 0x20))
-                        payerIsUser := calldataload(add(inputs.offset, 0x40))
-                        makerToken := calldataload(add(inputs.offset, 0x60))
-                        takerToken := calldataload(add(inputs.offset, 0x80))
-                        maker := calldataload(add(inputs.offset, 0xa0))
-                        makerAmount := calldataload(add(inputs.offset, 0xc0))
-                        takerAmount := calldataload(add(inputs.offset, 0xe0))
-                        nonce := calldataload(add(inputs.offset, 0x100))
-                        deadline := calldataload(add(inputs.offset, 0x120))
-                    }
-                    address payer = payerIsUser ? lockedBy : address(this);
-                    bytes calldata signature = inputs.toBytes(10);
-                    fill(
-                        payer,
-                        map(recipient),
-                        amountIn,
-                        MakerOrder({
-                            makerToken: makerToken,
-                            takerToken: takerToken,
-                            maker: maker,
-                            makerAmount: makerAmount,
-                            takerAmount: takerAmount,
-                            nonce: nonce,
-                            deadline: deadline
-                        }),
-                        signature
-                    );
-            } else if (command == Commands.WRAP_FEW_TOKEN) {
-                    address token;
-                    address recipient;
-                    uint256 amount;
-                    assembly {
-                        token := calldataload(inputs.offset)
-                        recipient := calldataload(add(inputs.offset, 0x20))
-                        amount := calldataload(add(inputs.offset, 0x40))
-                    }
+                address recipient;
+                uint256 amountIn;
+                bool payerIsUser;
+                address makerToken;
+                address takerToken;
+                address maker;
+                uint256 makerAmount;
+                uint256 takerAmount;
+                uint256 nonce;
+                uint256 deadline;
+                assembly {
+                    recipient := calldataload(inputs.offset)
+                    amountIn := calldataload(add(inputs.offset, 0x20))
+                    payerIsUser := calldataload(add(inputs.offset, 0x40))
+                    makerToken := calldataload(add(inputs.offset, 0x60))
+                    takerToken := calldataload(add(inputs.offset, 0x80))
+                    maker := calldataload(add(inputs.offset, 0xa0))
+                    makerAmount := calldataload(add(inputs.offset, 0xc0))
+                    takerAmount := calldataload(add(inputs.offset, 0xe0))
+                    nonce := calldataload(add(inputs.offset, 0x100))
+                    deadline := calldataload(add(inputs.offset, 0x120))
+                }
+                address payer = payerIsUser ? lockedBy : address(this);
+                bytes calldata signature = inputs.toBytes(10);
+                fill(
+                    payer,
+                    map(recipient),
+                    amountIn,
+                    MakerOrder({
+                        makerToken: makerToken,
+                        takerToken: takerToken,
+                        maker: maker,
+                        makerAmount: makerAmount,
+                        takerAmount: takerAmount,
+                        nonce: nonce,
+                        deadline: deadline
+                    }),
+                    signature
+                );
+            } else if (command == Commands.WRAP_UNWRAP_FEW_TOKEN) {
+                address token;
+                address recipient;
+                uint256 amount;
+                bool isWrap;
+                assembly {
+                    token := calldataload(inputs.offset)
+                    recipient := calldataload(add(inputs.offset, 0x20))
+                    amount := calldataload(add(inputs.offset, 0x40))
+                    isWrap := calldataload(add(inputs.offset, 0x60))
+                }
+                if (isWrap) {
                     Payments.wrapFewToken(token, map(recipient), amount);
-                } else if (command == Commands.UNWRAP_FEW_TOKEN) {
-                    address wrappedToken;
-                    address recipient;
-                    uint256 amountMin;
-                    assembly {
-                        wrappedToken := calldataload(inputs.offset)
-                        recipient := calldataload(add(inputs.offset, 0x20))
-                        amountMin := calldataload(add(inputs.offset, 0x40))
-                    }
-                    Payments.unwrapFewToken(wrappedToken, map(recipient), amountMin);
+                }
+                else {
+                    Payments.unwrapFewToken(token, map(recipient), amount);
+                }
             } else {
                 // placeholder area for commands 0x25-0x3f
                 revert InvalidCommandType(command);
