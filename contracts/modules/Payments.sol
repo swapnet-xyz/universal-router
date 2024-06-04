@@ -17,7 +17,7 @@ abstract contract Payments is PaymentsImmutables {
 
     error InsufficientToken();
     error InsufficientETH();
-    error InsufficientSTETH();
+    error InssuficientFewToken();
     error InvalidBips();
     error InvalidSpender();
 
@@ -180,7 +180,7 @@ abstract contract Payments is PaymentsImmutables {
             uint256 amountToken = IFewWrappedToken(wrappedToken).unwrap(balanceWrappedToken);
 
             if (amountToken < amountMinimum) {
-                revert InsufficientSTETH();
+                revert InssuficientFewToken();
             }
 
             if (recipient != address(this)) {
