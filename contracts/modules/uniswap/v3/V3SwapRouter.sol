@@ -8,7 +8,7 @@ import {IUniswapV3Pool} from '@uniswap/v3-core/contracts/interfaces/IUniswapV3Po
 import {IUniswapV3SwapCallback} from '@uniswap/v3-core/contracts/interfaces/callback/IUniswapV3SwapCallback.sol';
 import {Constants} from '../../../libraries/Constants.sol';
 import {Permit2Payments} from '../../Permit2Payments.sol';
-import {UniswapImmutables} from '../UniswapImmutables.sol';
+import {UniswapV3ForkNames, UniswapImmutables} from '../UniswapImmutables.sol';
 import {Constants} from '../../../libraries/Constants.sol';
 import {ERC20} from 'solmate/src/tokens/ERC20.sol';
 
@@ -46,7 +46,12 @@ abstract contract V3SwapRouter is UniswapImmutables, Permit2Payments, IUniswapV3
         // because exact output swaps are executed in reverse order, in this case tokenOut is actually tokenIn
         (address tokenIn, uint24 fee, address tokenOut) = path.decodeFirstPool();
 
-        if (computePoolAddress(tokenIn, tokenOut, fee) != msg.sender) revert V3InvalidCaller();
+        if (
+            computePoolAddress(UniswapV3ForkNames.Uniswap, tokenIn, tokenOut, fee) != msg.sender &&
+            computePoolAddress(UniswapV3ForkNames.Thruster, tokenIn, tokenOut, fee) != msg.sender
+        ) {
+            revert V3InvalidCaller();
+        }
 
         (bool isExactInput, uint256 amountToPay) =
             amount0Delta > 0 ? (tokenIn < tokenOut, uint256(amount0Delta)) : (tokenOut < tokenIn, uint256(amount1Delta));
