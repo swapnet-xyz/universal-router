@@ -45,7 +45,7 @@ contract AdminUpgradeabilityProxy is UpgradeabilityProxy {
    * It sets the `msg.sender` as the proxy administrator.
    * @param _implementation address of the initial implementation.
    */
-  constructor(address _implementation) UpgradeabilityProxy(_implementation) public {
+  constructor(address _implementation) UpgradeabilityProxy(_implementation) {
     assert(ADMIN_SLOT == keccak256("org.zeppelinos.proxy.admin"));
 
     _setAdmin(msg.sender);
@@ -54,14 +54,14 @@ contract AdminUpgradeabilityProxy is UpgradeabilityProxy {
   /**
    * @return The address of the proxy admin.
    */
-  function admin() external view ifAdmin returns (address) {
+  function admin() external ifAdmin returns (address) {
     return _admin();
   }
 
   /**
    * @return The address of the implementation.
    */
-  function implementation() external view ifAdmin returns (address) {
+  function implementation() external ifAdmin returns (address) {
     return _implementation();
   }
 
@@ -95,13 +95,14 @@ contract AdminUpgradeabilityProxy is UpgradeabilityProxy {
    * called, as described in
    * https://solidity.readthedocs.io/en/develop/abi-spec.html#function-selector-and-argument-encoding.
    */
-  function upgradeToAndCall(address newImplementation, bytes data) payable external ifAdmin {
+  function upgradeToAndCall(address newImplementation, bytes calldata data) payable external ifAdmin {
     _upgradeTo(newImplementation);
-    require(address(this).call.value(msg.value)(data));
+    (bool succeeded, ) = address(this).call{value: msg.value}(data);
+    require(succeeded == true);
   }
 
   /**
-   * @return The admin slot.
+   * @return adm The admin slot.
    */
   function _admin() internal view returns (address adm) {
     bytes32 slot = ADMIN_SLOT;
@@ -125,7 +126,7 @@ contract AdminUpgradeabilityProxy is UpgradeabilityProxy {
   /**
    * @dev Only fall back when the sender is not the admin.
    */
-  function _willFallback() internal {
+  function _willFallback() internal override {
     require(msg.sender != _admin(), "Cannot call fallback function from the proxy admin");
     super._willFallback();
   }

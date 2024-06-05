@@ -17,6 +17,8 @@ abstract contract Proxy {
     _fallback();
   }
 
+  receive() external payable {}
+
   /**
    * @return The Address of the implementation.
    */
@@ -54,7 +56,7 @@ abstract contract Proxy {
    * Can be redefined in derived contracts to add functionality.
    * Redefinitions must call super._willFallback().
    */
-  function _willFallback() internal {
+  function _willFallback() internal virtual {
   }
 
   /**
