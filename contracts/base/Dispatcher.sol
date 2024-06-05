@@ -9,6 +9,7 @@ import {BytesLib} from '../modules/uniswap/v3/BytesLib.sol';
 import {Payments} from '../modules/Payments.sol';
 import {PaymentsImmutables} from '../modules/PaymentsImmutables.sol';
 import {NFTImmutables} from '../modules/NFTImmutables.sol';
+import {UniswapV2ForkNames, UniswapV3ForkNames} from '../modules/uniswap/UniswapImmutables.sol';
 import {Callbacks} from '../base/Callbacks.sol';
 import {Commands} from '../libraries/Commands.sol';
 import {LockAndMsgSender} from './LockAndMsgSender.sol';
