@@ -52,6 +52,12 @@ contract UniversalRouter is IUniversalRouter, Dispatcher, RewardsCollector {
         )
     {}
 
+    /// Initialize the storage of proxy account
+    function init() external {
+        lockedBy = NOT_LOCKED_FLAG;
+        maxAmountInCached = DEFAULT_MAX_AMOUNT_IN;
+    }
+
     /// @inheritdoc IUniversalRouter
     function execute(bytes calldata commands, bytes[] calldata inputs, uint256 deadline)
         external

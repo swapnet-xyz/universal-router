@@ -11,13 +11,14 @@ import {MockERC1155} from './mock/MockERC1155.sol';
 import {Callbacks} from '../../contracts/base/Callbacks.sol';
 import {ExampleModule} from '../../contracts/test/ExampleModule.sol';
 import {RouterParameters} from '../../contracts/base/RouterImmutables.sol';
+import {UpgradeableRouterTest} from './UpgradeableRouterTest.sol';
 import {ERC20} from 'solmate/src/tokens/ERC20.sol';
 import 'permit2/src/interfaces/IAllowanceTransfer.sol';
 
 import '@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol';
 import '@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol';
 
-contract UniversalRouterTest is Test {
+contract UniversalRouterTest is UpgradeableRouterTest {
     address constant RECIPIENT = address(10);
     uint256 constant AMOUNT = 10 ** 18;
 
@@ -57,7 +58,7 @@ contract UniversalRouterTest is Test {
             v2Thruster10kPairInitCodeHash: bytes32(0),
             v3ThrusterPoolInitCodeHash: bytes32(0)
         });
-        router = new UniversalRouter(params);
+        router = deployRouter(params);
         testModule = new ExampleModule();
         erc20 = new MockERC20();
         erc1155 = new MockERC1155();
