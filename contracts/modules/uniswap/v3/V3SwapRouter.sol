@@ -27,10 +27,10 @@ abstract contract V3SwapRouter is UniswapImmutables, Permit2Payments, IUniswapV3
 
     /// @dev Used as the placeholder value for maxAmountIn, because the computed amount in for an exact output swap
     /// can never actually be this value
-    uint256 private constant DEFAULT_MAX_AMOUNT_IN = type(uint256).max;
+    uint256 internal constant DEFAULT_MAX_AMOUNT_IN = type(uint256).max;
 
     /// @dev Transient storage variable used for checking slippage
-    uint256 private maxAmountInCached = DEFAULT_MAX_AMOUNT_IN;
+    uint256 internal maxAmountInCached = DEFAULT_MAX_AMOUNT_IN;
 
     /// @dev The minimum value that can be returned from #getSqrtRatioAtTick. Equivalent to getSqrtRatioAtTick(MIN_TICK)
     uint160 internal constant MIN_SQRT_RATIO = 4295128739;
