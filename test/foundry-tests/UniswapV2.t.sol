@@ -11,6 +11,7 @@ import {Payments} from '../../contracts/modules/Payments.sol';
 import {Constants} from '../../contracts/libraries/Constants.sol';
 import {Commands} from '../../contracts/libraries/Commands.sol';
 import {RouterParameters} from '../../contracts/base/RouterImmutables.sol';
+import {UniswapV2ForkNames} from '../../contracts/modules/uniswap/UniswapImmutables.sol';
 
 import '@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol';
 import '@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol';
@@ -26,13 +27,17 @@ abstract contract UniswapV2Test is Test {
 
     UniversalRouter router;
 
+    UniswapV2ForkNames constant FORKNAME = UniswapV2ForkNames.Uniswap;
+
     function setUp() public virtual {
-        vm.createSelectFork(vm.envString('FORK_URL'), 16000000);
+        string memory forkUrl = string.concat("https://mainnet.infura.io/v3/", vm.envString('INFURA_API_KEY'));
+        vm.createSelectFork(forkUrl, 16000000);
         setUpTokens();
 
         RouterParameters memory params = RouterParameters({
             permit2: address(PERMIT2),
             weth9: address(WETH9),
+            fewFactory: address(0),
             seaportV1_5: address(0),
             seaportV1_4: address(0),
             openseaConduit: address(0),
@@ -50,7 +55,13 @@ abstract contract UniswapV2Test is Test {
             v2Factory: address(FACTORY),
             v3Factory: address(0),
             pairInitCodeHash: bytes32(0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f),
-            poolInitCodeHash: bytes32(0)
+            poolInitCodeHash: bytes32(0),
+            v2Thruster3kFactory: address(0),
+            v2Thruster10kFactory: address(0),
+            v3ThrusterFactory: address(0),
+            v2Thruster3kPairInitCodeHash: bytes32(0),
+            v2Thruster10kPairInitCodeHash: bytes32(0),
+            v3ThrusterPoolInitCodeHash: bytes32(0)
         });
         router = new UniversalRouter(params);
 
@@ -78,7 +89,7 @@ abstract contract UniswapV2Test is Test {
         path[0] = token0();
         path[1] = token1();
         bytes[] memory inputs = new bytes[](1);
-        inputs[0] = abi.encode(Constants.MSG_SENDER, AMOUNT, 0, path, true);
+        inputs[0] = abi.encode(Constants.MSG_SENDER, AMOUNT, 0, path, true, FORKNAME);
 
         router.execute(commands, inputs);
         assertEq(ERC20(token0()).balanceOf(FROM), BALANCE - AMOUNT);
@@ -91,7 +102,7 @@ abstract contract UniswapV2Test is Test {
         path[0] = token1();
         path[1] = token0();
         bytes[] memory inputs = new bytes[](1);
-        inputs[0] = abi.encode(Constants.MSG_SENDER, AMOUNT, 0, path, true);
+        inputs[0] = abi.encode(Constants.MSG_SENDER, AMOUNT, 0, path, true, FORKNAME);
 
         router.execute(commands, inputs);
         assertEq(ERC20(token1()).balanceOf(FROM), BALANCE - AMOUNT);
@@ -105,7 +116,7 @@ abstract contract UniswapV2Test is Test {
         path[0] = token0();
         path[1] = token1();
         bytes[] memory inputs = new bytes[](1);
-        inputs[0] = abi.encode(Constants.MSG_SENDER, AMOUNT, 0, path, false);
+        inputs[0] = abi.encode(Constants.MSG_SENDER, AMOUNT, 0, path, false, FORKNAME);
 
         router.execute(commands, inputs);
         assertGt(ERC20(token1()).balanceOf(FROM), BALANCE);
@@ -118,7 +129,7 @@ abstract contract UniswapV2Test is Test {
         path[0] = token1();
         path[1] = token0();
         bytes[] memory inputs = new bytes[](1);
-        inputs[0] = abi.encode(Constants.MSG_SENDER, AMOUNT, 0, path, false);
+        inputs[0] = abi.encode(Constants.MSG_SENDER, AMOUNT, 0, path, false, FORKNAME);
 
         router.execute(commands, inputs);
         assertGt(ERC20(token0()).balanceOf(FROM), BALANCE);
@@ -130,7 +141,7 @@ abstract contract UniswapV2Test is Test {
         path[0] = token0();
         path[1] = token1();
         bytes[] memory inputs = new bytes[](1);
-        inputs[0] = abi.encode(Constants.MSG_SENDER, AMOUNT, type(uint256).max, path, true);
+        inputs[0] = abi.encode(Constants.MSG_SENDER, AMOUNT, type(uint256).max, path, true, FORKNAME);
 
         router.execute(commands, inputs);
         assertLt(ERC20(token0()).balanceOf(FROM), BALANCE);
@@ -143,7 +154,7 @@ abstract contract UniswapV2Test is Test {
         path[0] = token1();
         path[1] = token0();
         bytes[] memory inputs = new bytes[](1);
-        inputs[0] = abi.encode(Constants.MSG_SENDER, AMOUNT, type(uint256).max, path, true);
+        inputs[0] = abi.encode(Constants.MSG_SENDER, AMOUNT, type(uint256).max, path, true, FORKNAME);
 
         router.execute(commands, inputs);
         assertLt(ERC20(token1()).balanceOf(FROM), BALANCE);
@@ -157,7 +168,7 @@ abstract contract UniswapV2Test is Test {
         path[0] = token0();
         path[1] = token1();
         bytes[] memory inputs = new bytes[](1);
-        inputs[0] = abi.encode(Constants.MSG_SENDER, AMOUNT, type(uint256).max, path, false);
+        inputs[0] = abi.encode(Constants.MSG_SENDER, AMOUNT, type(uint256).max, path, false, FORKNAME);
 
         router.execute(commands, inputs);
         assertGe(ERC20(token1()).balanceOf(FROM), BALANCE + AMOUNT);
@@ -170,7 +181,7 @@ abstract contract UniswapV2Test is Test {
         path[0] = token1();
         path[1] = token0();
         bytes[] memory inputs = new bytes[](1);
-        inputs[0] = abi.encode(Constants.MSG_SENDER, AMOUNT, type(uint256).max, path, false);
+        inputs[0] = abi.encode(Constants.MSG_SENDER, AMOUNT, type(uint256).max, path, false, FORKNAME);
 
         router.execute(commands, inputs);
         assertGe(ERC20(token0()).balanceOf(FROM), BALANCE + AMOUNT);
