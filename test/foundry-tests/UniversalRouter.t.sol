@@ -31,6 +31,7 @@ contract UniversalRouterTest is Test {
         RouterParameters memory params = RouterParameters({
             permit2: address(0),
             weth9: address(0),
+            fewFactory: address(0),
             seaportV1_5: address(0),
             seaportV1_4: address(0),
             openseaConduit: address(0),
@@ -48,7 +49,13 @@ contract UniversalRouterTest is Test {
             v2Factory: address(0),
             v3Factory: address(0),
             pairInitCodeHash: bytes32(0),
-            poolInitCodeHash: bytes32(0)
+            poolInitCodeHash: bytes32(0),
+            v2Thruster3kFactory: address(0),
+            v2Thruster10kFactory: address(0),
+            v3ThrusterFactory: address(0),
+            v2Thruster3kPairInitCodeHash: bytes32(0),
+            v2Thruster10kPairInitCodeHash: bytes32(0),
+            v3ThrusterPoolInitCodeHash: bytes32(0)
         });
         router = new UniversalRouter(params);
         testModule = new ExampleModule();
