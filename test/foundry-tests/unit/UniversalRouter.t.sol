@@ -2,16 +2,16 @@
 pragma solidity ^0.8.15;
 
 import 'forge-std/Test.sol';
-import {UniversalRouter} from '../../contracts/UniversalRouter.sol';
-import {Payments} from '../../contracts/modules/Payments.sol';
-import {Constants} from '../../contracts/libraries/Constants.sol';
-import {Commands} from '../../contracts/libraries/Commands.sol';
+import {UniversalRouter} from '../../../contracts/UniversalRouter.sol';
+import {Payments} from '../../../contracts/modules/Payments.sol';
+import {Constants} from '../../../contracts/libraries/Constants.sol';
+import {Commands} from '../../../contracts/libraries/Commands.sol';
 import {MockERC20} from './mock/MockERC20.sol';
 import {MockERC1155} from './mock/MockERC1155.sol';
-import {Callbacks} from '../../contracts/base/Callbacks.sol';
-import {ExampleModule} from '../../contracts/test/ExampleModule.sol';
-import {RouterParameters} from '../../contracts/base/RouterImmutables.sol';
-import {UpgradeableRouterTest} from './UpgradeableRouterTest.sol';
+import {Callbacks} from '../../../contracts/base/Callbacks.sol';
+import {ExampleModule} from '../../../contracts/test/ExampleModule.sol';
+import {RouterParameters} from '../../../contracts/base/RouterImmutables.sol';
+import {UpgradeableRouterTest} from '../UpgradeableRouterTest.sol';
 import {ERC20} from 'solmate/src/tokens/ERC20.sol';
 import 'permit2/src/interfaces/IAllowanceTransfer.sol';
 
