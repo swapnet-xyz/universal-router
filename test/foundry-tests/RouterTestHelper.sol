@@ -53,13 +53,13 @@ contract RouterTestHelper is Test {
         deal(owner, 1 << 128);    // provides the owner some ether
 
         safeDeal(token, owner, amount);  // provides the owner enough tokens
-        safeApprove(token, owner, routerAddress, amount);  // approve routerAddress as spender
+        safeApprove(token, owner, PERMIT2ADDRESS, amount);  // approve PERMIT2 as spender
 
         vm.prank(owner);
         IAllowanceTransfer(PERMIT2ADDRESS).approve(token, routerAddress, type(uint160).max, type(uint48).max);
     }
 
-    function safeDeal(address token, address owner, uint amount) internal {
+    function safeDeal(address token, address owner, uint amount) virtual internal {
         if (token == USDC) {
             IUSDC usdc = IUSDC(token);
             vm.prank(usdc.masterMinter());

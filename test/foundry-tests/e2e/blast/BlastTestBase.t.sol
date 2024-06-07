@@ -8,6 +8,10 @@ import {UniswapV2ForkNames, UniswapV3ForkNames} from '../../../../contracts/modu
 import {Commands} from '../../../../contracts/libraries/Commands.sol';
 import {RouterTestHelper} from "../../RouterTestHelper.sol";
 
+interface IWETH {
+    function deposit() external payable;
+}
+
 contract BlastTestBase is RouterTestHelper {
 
     // address constant USDC = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
@@ -21,7 +25,7 @@ contract BlastTestBase is RouterTestHelper {
 
     function setUp() public {
         string memory forkUrl = string.concat("https://blast-mainnet.infura.io/v3/", vm.envString('INFURA_API_KEY'));
-        vm.createSelectFork(forkUrl, 4157366);
+        vm.createSelectFork(forkUrl, 4457366);
 
         RouterParameters memory params = RouterParameters({
             permit2: PERMIT2ADDRESS,
@@ -42,9 +46,9 @@ contract BlastTestBase is RouterTestHelper {
             looksRareRewardsDistributor: address(0),
             looksRareToken: address(0),
             v2Factory: address(0),
-            v3Factory: address(0),
+            v3Factory: address(0x792edAdE80af5fC680d96a2eD80A44247D2Cf6Fd),
             pairInitCodeHash: bytes32(0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f),
-            poolInitCodeHash: bytes32(0),
+            poolInitCodeHash: bytes32(0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54),
             v2Thruster3kFactory: address(0),
             v2Thruster10kFactory: address(0),
             v3ThrusterFactory: address(0),
@@ -55,10 +59,23 @@ contract BlastTestBase is RouterTestHelper {
         router = deployRouter(params);
     }
 
+    function safeDeal(address token, address owner, uint amount) override internal {
+        if (token == WETH) {
+            vm.deal(owner, amount + 1000000000000000000);
+            IWETH weth = IWETH(token);
+            vm.prank(owner);
+            weth.deposit{value: amount}();
+        }
+        else {
+            deal(token, owner, amount);
+        }
+    }
+
     function runV3SingleExactIn(
         uint256 command,
         address inputToken,
         address outputToken,
+        uint24 v3FeeTier,
         uint amountIn,
         uint amountOutMinimum,
         UniswapV3ForkNames v3ForkName,
@@ -80,9 +97,7 @@ contract BlastTestBase is RouterTestHelper {
         }
 
         bytes memory commands = abi.encodePacked(bytes1(uint8(command)));
-        address[] memory path = new address[](2);
-        path[0] = inputToken;
-        path[1] = outputToken;
+        bytes memory path = abi.encodePacked(inputToken, v3FeeTier, outputToken);
         bytes[] memory inputs = new bytes[](1);
         inputs[0] = abi.encode(recipientAddress, amountIn, 0, path, true, v3ForkName);
 
@@ -102,10 +117,11 @@ contract BlastTestBase is RouterTestHelper {
             Commands.V3_SWAP_EXACT_IN,
             WETH,  // inputTokenAddress
             USDB,  // outputTokenAddress
+            500,  // UniswapV3 fee tier
             1e18,  // amountIn,
-            2.312e9,  // amountOutMinimum
+            3.798e21,  // amountOutMinimum
             UniswapV3ForkNames.Uniswap,
-            address(0),  // recipientAddress
+            TRADER,  // recipientAddress
             ''  // expectedError
         );
     }
