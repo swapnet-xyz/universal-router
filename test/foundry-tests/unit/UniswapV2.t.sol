@@ -12,12 +12,12 @@ import {Constants} from '../../../contracts/libraries/Constants.sol';
 import {Commands} from '../../../contracts/libraries/Commands.sol';
 import {RouterParameters} from '../../../contracts/base/RouterImmutables.sol';
 import {UniswapV2ForkNames} from '../../../contracts/modules/uniswap/UniswapImmutables.sol';
-import {RouterTestHelper} from '../RouterTestHelper.sol';
+import {EthereumRouterTestHelper} from '../EthereumRouterTestHelper.sol';
 
 import '@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol';
 import '@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol';
 
-abstract contract UniswapV2Test is RouterTestHelper {
+abstract contract UniswapV2Test is EthereumRouterTestHelper {
     address constant RECIPIENT = address(10);
     uint256 constant AMOUNT = 1 ether;
     uint256 constant BALANCE = 100000 ether;
