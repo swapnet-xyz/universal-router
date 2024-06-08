@@ -44,7 +44,7 @@ contract BlastTestBase is RouterTestHelper {
             routerRewardsDistributor: address(0),
             looksRareRewardsDistributor: address(0),
             looksRareToken: address(0),
-            v2Factory: address(0),
+            v2Factory: address(0x5C346464d33F90bABaf70dB6388507CC889C1070),
             v3Factory: address(0x792edAdE80af5fC680d96a2eD80A44247D2Cf6Fd),
             pairInitCodeHash: bytes32(0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f),
             poolInitCodeHash: bytes32(0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54),
@@ -105,20 +105,30 @@ contract BlastTestBase is RouterTestHelper {
         uint outputTokenBalance0 = ERC20(outputToken).balanceOf(TRADER);
 
         bytes memory commands = abi.encodePacked(getCommand(isV2, isExactIn));
-        bytes memory path;
-        if (isV2) {
-            path = abi.encodePacked(inputToken, outputToken);
-        }
-        else {
-            path = abi.encodePacked(inputToken, v3FeeTier, outputToken);
-        }
 
         bytes[] memory inputs = new bytes[](1);
-        if (isExactIn) {
-            inputs[0] = abi.encode(recipientAddress, amountIn, amountOut, path, true, forkName);
+        if (isV2) {
+            address[] memory path = new address[](2);
+            path[0] = inputToken;
+            path[1] = outputToken;
+
+            if (isExactIn) {
+                inputs[0] = abi.encode(recipientAddress, amountIn, amountOut, path, true, forkName);
+            }
+            else {
+                inputs[0] = abi.encode(recipientAddress, amountOut, amountIn, path, true, forkName);
+            }
         }
         else {
-            inputs[0] = abi.encode(recipientAddress, amountOut, amountIn, path, true, forkName);
+            bytes memory path;
+            if (isExactIn) {
+                path = abi.encodePacked(inputToken, v3FeeTier, outputToken);
+                inputs[0] = abi.encode(recipientAddress, amountIn, amountOut, path, true, forkName);
+            }
+            else {
+                path = abi.encodePacked(outputToken, v3FeeTier, inputToken);
+                inputs[0] = abi.encode(recipientAddress, amountOut, amountIn, path, true, forkName);
+            }
         }
 
         if (expectedError.length > 0) {
@@ -136,27 +146,12 @@ contract BlastTestBase is RouterTestHelper {
         }
 
         if (isExactIn) {
-            assertApproxEqAbs(inputTokenBalance0 - ERC20(inputToken).balanceOf(TRADER), amountIn - amountIn / 20, amountIn / 20);
-            assertEq(ERC20(outputToken).balanceOf(TRADER) - outputTokenBalance0, amountOut);
-        }
-        else {
             assertEq(inputTokenBalance0 - ERC20(inputToken).balanceOf(TRADER), amountIn);
             assertApproxEqAbs(ERC20(outputToken).balanceOf(TRADER) - outputTokenBalance0, amountOut + amountOut / 20, amountOut / 20);
         }
-    }
-
-    function test_UniswapV3SellWethToUsdb() public {
-        runV2V3SingleSwap(
-            false,  // isV2
-            true,  // isExactIn
-            WETH,  // inputTokenAddress
-            USDB,  // outputTokenAddress
-            500,  // UniswapV3 fee tier
-            1e18,  // amountIn,
-            3.798e21,  // amountOutMinimum
-            uint(UniswapV3ForkNames.Uniswap),
-            TRADER,  // recipientAddress
-            ''  // expectedError
-        );
+        else {
+            assertApproxEqAbs(inputTokenBalance0 - ERC20(inputToken).balanceOf(TRADER), amountIn - amountIn / 20, amountIn / 20);
+            assertEq(ERC20(outputToken).balanceOf(TRADER) - outputTokenBalance0, amountOut);
+        }
     }
 }
