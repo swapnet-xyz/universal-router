@@ -87,13 +87,13 @@ library UniswapV2Library {
     /// @param reserveIn The reserves available of the input token
     /// @param reserveOut The reserves available of the output token
     /// @return amountOut The output amount of the output token
-    function getAmountOut(uint256 amountIn, uint256 reserveIn, uint256 reserveOut)
+    function getAmountOut(uint256 amountIn, uint256 reserveIn, uint256 reserveOut, uint256 feeRate)
         internal
         pure
         returns (uint256 amountOut)
     {
         if (reserveIn == 0 || reserveOut == 0) revert InvalidReserves();
-        uint256 amountInWithFee = amountIn * 997;
+        uint256 amountInWithFee = amountIn * (1000 - feeRate);
         uint256 numerator = amountInWithFee * reserveOut;
         uint256 denominator = reserveIn * 1000 + amountInWithFee;
         amountOut = numerator / denominator;
@@ -104,14 +104,14 @@ library UniswapV2Library {
     /// @param reserveIn The reserves available of the input token
     /// @param reserveOut The reserves available of the output token
     /// @return amountIn The input amount of the input token
-    function getAmountIn(uint256 amountOut, uint256 reserveIn, uint256 reserveOut)
+    function getAmountIn(uint256 amountOut, uint256 reserveIn, uint256 reserveOut, uint256 feeRate)
         internal
         pure
         returns (uint256 amountIn)
     {
         if (reserveIn == 0 || reserveOut == 0) revert InvalidReserves();
         uint256 numerator = reserveIn * amountOut * 1000;
-        uint256 denominator = (reserveOut - amountOut) * 997;
+        uint256 denominator = (reserveOut - amountOut) * (1000 - feeRate);
         amountIn = (numerator / denominator) + 1;
     }
 
@@ -122,7 +122,7 @@ library UniswapV2Library {
     /// @param path The path of the multi-hop trade
     /// @return amount The input amount of the input token
     /// @return pair The first pair in the trade
-    function getAmountInMultihop(address factory, bytes32 initCodeHash, uint256 amountOut, address[] memory path)
+    function getAmountInMultihop(address factory, bytes32 initCodeHash, uint256 feeRate, uint256 amountOut, address[] memory path)
         internal
         view
         returns (uint256 amount, address pair)
@@ -134,7 +134,7 @@ library UniswapV2Library {
             uint256 reserveOut;
 
             (pair, reserveIn, reserveOut) = pairAndReservesFor(factory, initCodeHash, path[i - 1], path[i]);
-            amount = getAmountIn(amount, reserveIn, reserveOut);
+            amount = getAmountIn(amount, reserveIn, reserveOut, feeRate);
         }
     }
 

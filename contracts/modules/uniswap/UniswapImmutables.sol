@@ -72,16 +72,16 @@ contract UniswapImmutables {
         THRUSTER_V3_POOL_INIT_CODE_HASH = params.v3ThrusterPoolInitCodeHash;
     }
 
-    function getV2Immutables(UniswapV2ForkNames v2ForkName) view public returns (address factory, bytes32 initCode) {
+    function getV2Immutables(UniswapV2ForkNames v2ForkName) view public returns (address factory, bytes32 initCode, uint256 feeRate) {
         if (v2ForkName == UniswapV2ForkNames.Uniswap) {
-            return (UNISWAP_V2_FACTORY, UNISWAP_V2_PAIR_INIT_CODE_HASH);
+            return (UNISWAP_V2_FACTORY, UNISWAP_V2_PAIR_INIT_CODE_HASH, 3);
         }
         else if (v2ForkName == UniswapV2ForkNames.Thruster3k) {
-            return (THRUSTER_V2_3K_FACTORY, THRUSTER_V2_3K_PAIR_INIT_CODE_HASH);
+            return (THRUSTER_V2_3K_FACTORY, THRUSTER_V2_3K_PAIR_INIT_CODE_HASH, 3);
         }
         else {
             // if (v2ForkName == UniswapV2ForkNames.Thruster10k) {
-            return (THRUSTER_V2_10K_FACTORY, THRUSTER_V2_10K_PAIR_INIT_CODE_HASH);
+            return (THRUSTER_V2_10K_FACTORY, THRUSTER_V2_10K_PAIR_INIT_CODE_HASH, 10);
         }
     }
 
