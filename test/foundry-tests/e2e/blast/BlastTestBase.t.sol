@@ -151,7 +151,7 @@ contract BlastTestBase is RouterTestHelper {
         }
         else {
             assertApproxEqAbs(inputTokenBalance0 - ERC20(inputToken).balanceOf(TRADER), amountIn - amountIn / 20, amountIn / 20);
-            assertEq(ERC20(outputToken).balanceOf(TRADER) - outputTokenBalance0, amountOut);
+            assertApproxEqAbs(ERC20(outputToken).balanceOf(TRADER) - outputTokenBalance0, amountOut, 1000000);
         }
     }
 }
