@@ -15,7 +15,7 @@ abstract contract V2SwapRouter is UniswapImmutables, Permit2Payments {
     error V2TooMuchRequested();
     error V2InvalidPath();
 
-    function _v2Swap(address factory, bytes32 initCode, address[] calldata path, address recipient, address pair) private {
+    function _v2Swap(address factory, bytes32 initCode, uint256 feeRate, address[] calldata path, address recipient, address pair) private {
         unchecked {
             if (path.length < 2) revert V2InvalidPath();
 
@@ -29,7 +29,7 @@ abstract contract V2SwapRouter is UniswapImmutables, Permit2Payments {
                 (uint256 reserveInput, uint256 reserveOutput) =
                     input == token0 ? (reserve0, reserve1) : (reserve1, reserve0);
                 uint256 amountInput = ERC20(input).balanceOf(pair) - reserveInput;
-                uint256 amountOutput = UniswapV2Library.getAmountOut(amountInput, reserveInput, reserveOutput);
+                uint256 amountOutput = UniswapV2Library.getAmountOut(amountInput, reserveInput, reserveOutput, feeRate);
                 (uint256 amount0Out, uint256 amount1Out) =
                     input == token0 ? (uint256(0), amountOutput) : (amountOutput, uint256(0));
                 address nextPair;
@@ -59,7 +59,7 @@ abstract contract V2SwapRouter is UniswapImmutables, Permit2Payments {
         address[] calldata path,
         address payer
     ) internal {
-        (address factory, bytes32 initCode) = getV2Immutables(v2ForkName);
+        (address factory, bytes32 initCode, uint256 feeRate) = getV2Immutables(v2ForkName);
         address firstPair =
             UniswapV2Library.pairFor(factory, initCode, path[0], path[1]);
         if (
@@ -71,7 +71,7 @@ abstract contract V2SwapRouter is UniswapImmutables, Permit2Payments {
         ERC20 tokenOut = ERC20(path[path.length - 1]);
         uint256 balanceBefore = tokenOut.balanceOf(recipient);
 
-        _v2Swap(factory, initCode, path, recipient, firstPair);
+        _v2Swap(factory, initCode, feeRate, path, recipient, firstPair);
 
         uint256 amountOut = tokenOut.balanceOf(recipient) - balanceBefore;
         if (amountOut < amountOutMinimum) revert V2TooLittleReceived();
@@ -92,12 +92,12 @@ abstract contract V2SwapRouter is UniswapImmutables, Permit2Payments {
         address[] calldata path,
         address payer
     ) internal {
-        (address factory, bytes32 initCode) = getV2Immutables(v2ForkName);
+        (address factory, bytes32 initCode, uint feeRate) = getV2Immutables(v2ForkName);
         (uint256 amountIn, address firstPair) =
-            UniswapV2Library.getAmountInMultihop(factory, initCode, amountOut, path);
+            UniswapV2Library.getAmountInMultihop(factory, initCode, feeRate, amountOut, path);
         if (amountIn > amountInMaximum) revert V2TooMuchRequested();
 
         payOrPermit2Transfer(path[0], payer, firstPair, amountIn);
-        _v2Swap(factory, initCode, path, recipient, firstPair);
+        _v2Swap(factory, initCode, feeRate, path, recipient, firstPair);
     }
 }

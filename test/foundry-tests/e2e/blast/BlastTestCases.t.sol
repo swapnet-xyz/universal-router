@@ -9,61 +9,154 @@ import {Commands} from '../../../../contracts/libraries/Commands.sol';
 import {BlastTestBase} from "./BlastTestBase.t.sol";
 
 contract BlastTestCases is BlastTestBase {
-    function test_UniswapV2ExactIn() public {
+    function test_V2UniswapExactIn() public {
         runV2V3SingleSwap(
             true,  // isV2
             true,  // isExactIn
+            uint(UniswapV2ForkNames.Uniswap),
             WETH,  // inputTokenAddress
             USDB,  // outputTokenAddress
             100,  // UniswapV3 fee tier, not used
             1e15,  // amountIn,
             3.789e18,  // amountOutMinimum
-            uint(UniswapV2ForkNames.Uniswap),
             TRADER,  // recipientAddress
             ''  // expectedError
         );
     }
 
-    function test_UniswapV2ExactOut() public {
+    function test_V2UniswapExactOut() public {
         runV2V3SingleSwap(
             true,  // isV2
             false,  // isExactIn
+            uint(UniswapV2ForkNames.Uniswap),
             WETH,  // inputTokenAddress
             USDB,  // outputTokenAddress
             100,  // UniswapV3 fee tier, not used
             1e15,  // amountIn,
             3.789e18,  // amountOutMinimum
-            uint(UniswapV2ForkNames.Uniswap),
             TRADER,  // recipientAddress
             ''  // expectedError
         );
     }
 
-    function test_UniswapV3ExactIn() public {
+
+    function test_V2Thruster3kExactIn() public {
+        runV2V3SingleSwap(
+            true,  // isV2
+            true,  // isExactIn
+            uint(UniswapV2ForkNames.Thruster3k),
+            WETH,  // inputTokenAddress
+            USDB,  // outputTokenAddress
+            100,  // UniswapV3 fee tier, not used
+            1e15,  // amountIn,
+            3.786e18,  // amountOutMinimum
+            TRADER,  // recipientAddress
+            ''  // expectedError
+        );
+    }
+
+    function test_V2Thruster3kExactOut() public {
+        runV2V3SingleSwap(
+            true,  // isV2
+            false,  // isExactIn
+            uint(UniswapV2ForkNames.Thruster3k),
+            WETH,  // inputTokenAddress
+            USDB,  // outputTokenAddress
+            100,  // UniswapV3 fee tier, not used
+            1e15,  // amountIn,
+            3.786e18,  // amountOutMinimum
+            TRADER,  // recipientAddress
+            ''  // expectedError
+        );
+    }
+
+
+    function test_V2Thruster10kExactIn() public {
+        runV2V3SingleSwap(
+            true,  // isV2
+            true,  // isExactIn
+            uint(UniswapV2ForkNames.Thruster10k),
+            WETH,  // inputTokenAddress
+            USDB,  // outputTokenAddress
+            100,  // UniswapV3 fee tier, not used
+            1e15,  // amountIn,
+            3.775e18,  // amountOutMinimum
+            TRADER,  // recipientAddress
+            ''  // expectedError
+        );
+    }
+
+    function test_V2Thruster10kExactOut() public {
+        runV2V3SingleSwap(
+            true,  // isV2
+            false,  // isExactIn
+            uint(UniswapV2ForkNames.Thruster10k),
+            WETH,  // inputTokenAddress
+            USDB,  // outputTokenAddress
+            100,  // UniswapV3 fee tier, not used
+            1e15,  // amountIn,
+            3.775e18,  // amountOutMinimum
+            TRADER,  // recipientAddress
+            ''  // expectedError
+        );
+    }
+
+
+    function test_V3UniswapExactIn() public {
         runV2V3SingleSwap(
             false,  // isV2
             true,  // isExactIn
+            uint(UniswapV3ForkNames.Uniswap),
             WETH,  // inputTokenAddress
             USDB,  // outputTokenAddress
             500,  // UniswapV3 fee tier
             1e18,  // amountIn,
             3.798e21,  // amountOutMinimum
-            uint(UniswapV3ForkNames.Uniswap),
             TRADER,  // recipientAddress
             ''  // expectedError
         );
     }
 
-    function test_UniswapV3ExactOut() public {
+    function test_V3UniswapExactOut() public {
         runV2V3SingleSwap(
             false,  // isV2
             false,  // isExactIn
-            WETH,  // inputTokenAddress     0x4300000000000000000000000000000000000004
-            USDB,  // outputTokenAddress    0x4300000000000000000000000000000000000003
+            uint(UniswapV3ForkNames.Uniswap),
+            WETH,  // inputTokenAddress
+            USDB,  // outputTokenAddress
             500,  // UniswapV3 fee tier
             1e18,  // amountInMaximum,
             3.798e21,  // amountOut
-            uint(UniswapV3ForkNames.Uniswap),
+            TRADER,  // recipientAddress
+            ''  // expectedError
+        );
+    }
+
+    function test_V3ThrusterExactIn() public {
+        runV2V3SingleSwap(
+            false,  // isV2
+            true,  // isExactIn
+            uint(UniswapV3ForkNames.Thruster),
+            WETH,  // inputTokenAddress
+            USDB,  // outputTokenAddress
+            500,  // UniswapV3 fee tier
+            1e18,  // amountIn,
+            3.798e21,  // amountOutMinimum
+            TRADER,  // recipientAddress
+            ''  // expectedError
+        );
+    }
+
+    function test_V3ThrusterExactOut() public {
+        runV2V3SingleSwap(
+            false,  // isV2
+            false,  // isExactIn
+            uint(UniswapV3ForkNames.Thruster),
+            WETH,  // inputTokenAddress
+            USDB,  // outputTokenAddress
+            500,  // UniswapV3 fee tier
+            1e18,  // amountInMaximum,
+            3.798e21,  // amountOut
             TRADER,  // recipientAddress
             ''  // expectedError
         );
