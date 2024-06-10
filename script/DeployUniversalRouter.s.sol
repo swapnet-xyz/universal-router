@@ -63,7 +63,11 @@ abstract contract DeployUniversalRouter is Script {
             v3ThrusterFactory: mapUnsupported(params.v3ThrusterFactory),
             v2Thruster3kPairInitCodeHash: params.v2Thruster3kPairInitCodeHash,
             v2Thruster10kPairInitCodeHash: params.v2Thruster10kPairInitCodeHash,
-            v3ThrusterPoolInitCodeHash: params.v3ThrusterPoolInitCodeHash
+            v3ThrusterPoolInitCodeHash: params.v3ThrusterPoolInitCodeHash,
+            v2RingswapFactory: mapUnsupported(params.v2RingswapFactory),
+            v3RingswapFactory: mapUnsupported(params.v3RingswapFactory),
+            v2RingswapPairInitCodeHash: params.v2RingswapPairInitCodeHash,
+            v3RingswapPoolInitCodeHash: params.v3RingswapPoolInitCodeHash
         });
 
         logParams();

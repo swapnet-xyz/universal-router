@@ -33,7 +33,11 @@ contract DeployCelo is DeployUniversalRouter {
             v3ThrusterFactory: UNSUPPORTED_PROTOCOL,
             v2Thruster3kPairInitCodeHash: BYTES32_ZERO,
             v2Thruster10kPairInitCodeHash: BYTES32_ZERO,
-            v3ThrusterPoolInitCodeHash: BYTES32_ZERO
+            v3ThrusterPoolInitCodeHash: BYTES32_ZERO,
+            v2RingswapFactory: UNSUPPORTED_PROTOCOL,
+            v3RingswapFactory: UNSUPPORTED_PROTOCOL,
+            v2RingswapPairInitCodeHash: BYTES32_ZERO,
+            v3RingswapPoolInitCodeHash: BYTES32_ZERO
         });
 
         unsupported = 0x5Dc88340E1c5c6366864Ee415d6034cadd1A9897;

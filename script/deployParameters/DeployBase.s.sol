@@ -33,7 +33,11 @@ contract DeployBase is DeployUniversalRouter {
             v3ThrusterFactory: UNSUPPORTED_PROTOCOL,
             v2Thruster3kPairInitCodeHash: BYTES32_ZERO,
             v2Thruster10kPairInitCodeHash: BYTES32_ZERO,
-            v3ThrusterPoolInitCodeHash: BYTES32_ZERO
+            v3ThrusterPoolInitCodeHash: BYTES32_ZERO,
+            v2RingswapFactory: UNSUPPORTED_PROTOCOL,
+            v3RingswapFactory: UNSUPPORTED_PROTOCOL,
+            v2RingswapPairInitCodeHash: BYTES32_ZERO,
+            v3RingswapPoolInitCodeHash: BYTES32_ZERO
         });
 
         unsupported = 0x9E18Efb3BE848940b0C92D300504Fb08C287FE85;

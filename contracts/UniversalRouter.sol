@@ -29,7 +29,11 @@ contract UniversalRouter is IUniversalRouter, Dispatcher, RewardsCollector {
                 params.v3ThrusterFactory,
                 params.v2Thruster3kPairInitCodeHash,
                 params.v2Thruster10kPairInitCodeHash,
-                params.v3ThrusterPoolInitCodeHash
+                params.v3ThrusterPoolInitCodeHash,
+                params.v2RingswapFactory,
+                params.v3RingswapFactory,
+                params.v2RingswapPairInitCodeHash,
+                params.v3RingswapPoolInitCodeHash
             )
         )
         PaymentsImmutables(PaymentsParameters(params.permit2, params.weth9, params.fewFactory, params.openseaConduit, params.sudoswap))
