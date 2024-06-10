@@ -7,6 +7,7 @@ import {UniversalRouter} from '../../../../contracts/UniversalRouter.sol';
 import {UniswapV2ForkNames, UniswapV3ForkNames} from '../../../../contracts/modules/uniswap/UniswapImmutables.sol';
 import {Commands} from '../../../../contracts/libraries/Commands.sol';
 import {RouterTestHelper} from "../../RouterTestHelper.sol";
+import {IFewFactory} from '../../../../contracts/interfaces/external/IFewFactory.sol';
 
 interface IWETH {
     function deposit() external payable;
@@ -14,11 +15,14 @@ interface IWETH {
 
 contract BlastTestBase is RouterTestHelper {
 
-    address constant PERMIT2ADDRESS = 0x000000000022D473030F116dDEE9F6B43aC78BA3;
+    address constant PERMIT2_ADDRESS = 0x000000000022D473030F116dDEE9F6B43aC78BA3;
     address constant USDB = 0x4300000000000000000000000000000000000003;
     address constant WETH = 0x4300000000000000000000000000000000000004;
     address constant ORBIT = 0x42E12D42b3d6C4A74a88A61063856756Ea2DB357;
     address constant WBTC = 0xF7bc58b8D8f97ADC129cfC4c9f45Ce3C0E1D2692;
+    address constant FEW_FACTORY_ADDRESS = 0x455b20131D59f01d082df1225154fDA813E8CeE9;
+    
+    IFewFactory public fewFactory;
 
     UniversalRouter public router;
 
@@ -27,9 +31,9 @@ contract BlastTestBase is RouterTestHelper {
         vm.createSelectFork(forkUrl, 4457366);
 
         RouterParameters memory params = RouterParameters({
-            permit2: PERMIT2ADDRESS,
+            permit2: PERMIT2_ADDRESS,
             weth9: WETH,
-            fewFactory: address(0x455b20131D59f01d082df1225154fDA813E8CeE9),
+            fewFactory: address(FEW_FACTORY_ADDRESS),
             seaportV1_5: address(0),
             seaportV1_4: address(0),
             openseaConduit: address(0),
@@ -56,6 +60,7 @@ contract BlastTestBase is RouterTestHelper {
             v3ThrusterPoolInitCodeHash: bytes32(0xd0c3a51b16dbc778f000c620eaabeecd33b33a80bd145e1f7cbc0d4de335193d)
         });
         router = deployRouter(params);
+        fewFactory = IFewFactory(FEW_FACTORY_ADDRESS);
     }
 
     function safeDeal(address token, address owner, uint amount) override internal {
@@ -71,7 +76,7 @@ contract BlastTestBase is RouterTestHelper {
     }
 
     function permit2Address() pure override internal returns (address) {
-        return PERMIT2ADDRESS;
+        return PERMIT2_ADDRESS;
     }
 
     function getCommand(bool isV2, bool isExactIn) pure internal returns (uint8) {
