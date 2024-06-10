@@ -57,7 +57,11 @@ contract BlastTestBase is RouterTestHelper {
             v3ThrusterFactory: address(0xa08ae3d3f4dA51C22d3c041E468bdF4C61405AaB),     // This is actually Thruster deployer contract address, which is separated from factory
             v2Thruster3kPairInitCodeHash: bytes32(0x6f0346418750a1a53597a51ceff4f294b5f0e87f09715525b519d38ad3fab2cb),
             v2Thruster10kPairInitCodeHash: bytes32(0x32a9ff5a51b653cbafe88e38c4da86b859135750d3ca435f0ce732c8e3bb8335),
-            v3ThrusterPoolInitCodeHash: bytes32(0xd0c3a51b16dbc778f000c620eaabeecd33b33a80bd145e1f7cbc0d4de335193d)
+            v3ThrusterPoolInitCodeHash: bytes32(0xd0c3a51b16dbc778f000c620eaabeecd33b33a80bd145e1f7cbc0d4de335193d),
+            v2RingswapFactory: address(0x24F5Ac9A706De0cF795A8193F6AB3966B14ECfE6),
+            v3RingswapFactory: address(0x890509Fab3dD11D4Ff57d8471b5eAC74687E4C75),
+            v2RingswapPairInitCodeHash: bytes32(0x501ce753061ab6e75837b15f074633bb775f5972f8dc1112fcc829c2e88dc689),
+            v3RingswapPoolInitCodeHash: bytes32(0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54)
         });
         router = deployRouter(params);
         fewFactory = IFewFactory(FEW_FACTORY_ADDRESS);

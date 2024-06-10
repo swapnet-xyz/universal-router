@@ -31,4 +31,9 @@ struct RouterParameters {
     bytes32 v2Thruster3kPairInitCodeHash;
     bytes32 v2Thruster10kPairInitCodeHash;
     bytes32 v3ThrusterPoolInitCodeHash;
+
+    address v2RingswapFactory;
+    address v3RingswapFactory;
+    bytes32 v2RingswapPairInitCodeHash;
+    bytes32 v3RingswapPoolInitCodeHash;
 }

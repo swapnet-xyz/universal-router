@@ -33,7 +33,11 @@ contract DeployBaseGoerli is DeployUniversalRouter {
             v3ThrusterFactory: UNSUPPORTED_PROTOCOL,
             v2Thruster3kPairInitCodeHash: BYTES32_ZERO,
             v2Thruster10kPairInitCodeHash: BYTES32_ZERO,
-            v3ThrusterPoolInitCodeHash: BYTES32_ZERO
+            v3ThrusterPoolInitCodeHash: BYTES32_ZERO,
+            v2RingswapFactory: UNSUPPORTED_PROTOCOL,
+            v3RingswapFactory: UNSUPPORTED_PROTOCOL,
+            v2RingswapPairInitCodeHash: BYTES32_ZERO,
+            v3RingswapPoolInitCodeHash: BYTES32_ZERO
         });
 
         unsupported = 0x7B46ee9BaB49bd5b37117494689A035b0F187B59;

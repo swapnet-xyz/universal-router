@@ -56,7 +56,11 @@ contract UniversalRouterTest is EthereumRouterTestHelper {
             v3ThrusterFactory: address(0),
             v2Thruster3kPairInitCodeHash: bytes32(0),
             v2Thruster10kPairInitCodeHash: bytes32(0),
-            v3ThrusterPoolInitCodeHash: bytes32(0)
+            v3ThrusterPoolInitCodeHash: bytes32(0),
+            v2RingswapFactory: address(0),
+            v3RingswapFactory: address(0),
+            v2RingswapPairInitCodeHash: bytes32(0),
+            v3RingswapPoolInitCodeHash: bytes32(0)
         });
         router = deployRouter(params);
         testModule = new ExampleModule();

@@ -33,7 +33,11 @@ contract DeployPolygon is DeployUniversalRouter {
             v3ThrusterFactory: UNSUPPORTED_PROTOCOL,
             v2Thruster3kPairInitCodeHash: BYTES32_ZERO,
             v2Thruster10kPairInitCodeHash: BYTES32_ZERO,
-            v3ThrusterPoolInitCodeHash: BYTES32_ZERO
+            v3ThrusterPoolInitCodeHash: BYTES32_ZERO,
+            v2RingswapFactory: UNSUPPORTED_PROTOCOL,
+            v3RingswapFactory: UNSUPPORTED_PROTOCOL,
+            v2RingswapPairInitCodeHash: BYTES32_ZERO,
+            v3RingswapPoolInitCodeHash: BYTES32_ZERO
         });
 
         unsupported = 0xEf1c6E67703c7BD7107eed8303Fbe6EC2554BF6B;

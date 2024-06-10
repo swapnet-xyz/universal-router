@@ -33,7 +33,11 @@ contract DeployPolygonMumbai is DeployUniversalRouter {
             v3ThrusterFactory: UNSUPPORTED_PROTOCOL,
             v2Thruster3kPairInitCodeHash: BYTES32_ZERO,
             v2Thruster10kPairInitCodeHash: BYTES32_ZERO,
-            v3ThrusterPoolInitCodeHash: BYTES32_ZERO
+            v3ThrusterPoolInitCodeHash: BYTES32_ZERO,
+            v2RingswapFactory: UNSUPPORTED_PROTOCOL,
+            v3RingswapFactory: UNSUPPORTED_PROTOCOL,
+            v2RingswapPairInitCodeHash: BYTES32_ZERO,
+            v3RingswapPoolInitCodeHash: BYTES32_ZERO
         });
 
         unsupported = 0x5302086A3a25d473aAbBd0356eFf8Dd811a4d89B;
