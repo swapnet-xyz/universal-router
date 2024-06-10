@@ -6,6 +6,7 @@ import {RouterParameters} from '../../../../contracts/base/RouterImmutables.sol'
 import {UniversalRouter} from '../../../../contracts/UniversalRouter.sol';
 import {UniswapV2ForkNames, UniswapV3ForkNames} from '../../../../contracts/modules/uniswap/UniswapImmutables.sol';
 import {Commands} from '../../../../contracts/libraries/Commands.sol';
+import {Constants} from '../../../../contracts/libraries/Constants.sol';
 import {BlastTestBase} from "./BlastTestBase.t.sol";
 
 contract BlastTestCases is BlastTestBase {
@@ -160,5 +161,45 @@ contract BlastTestCases is BlastTestBase {
             TRADER,  // recipientAddress
             ''  // expectedError
         );
+    }
+
+    function test_wrapFewToken() public {
+
+        address token = WETH;
+        address wrappedToken = fewFactory.getWrappedToken(token);
+        uint amount = 1e18;
+
+        prepareUserAccountWithToken(token, TRADER, amount, address(router));
+        uint wrappedTokenBalance0 = ERC20(wrappedToken).balanceOf(TRADER);
+
+        bytes memory commands = abi.encodePacked(uint8(Commands.PERMIT2_TRANSFER_FROM), uint8(Commands.WRAP_UNWRAP_FEW_TOKEN));
+        bytes[] memory inputs = new bytes[](2);
+        inputs[0] = abi.encode(token, Constants.ADDRESS_THIS, amount);
+        inputs[1] = abi.encode(token, Constants.MSG_SENDER, amount, true);
+
+        vm.prank(TRADER);
+        router.execute(commands, inputs);
+
+        assertEq(ERC20(wrappedToken).balanceOf(TRADER) - wrappedTokenBalance0, amount);
+    }
+
+    function test_unwrapFewToken() public {
+
+        address token = WETH;
+        address wrappedToken = fewFactory.getWrappedToken(token);
+        uint amount = 1e18;
+
+        prepareUserAccountWithToken(wrappedToken, TRADER, amount, address(router));
+        uint tokenBalance0 = ERC20(token).balanceOf(TRADER);
+
+        bytes memory commands = abi.encodePacked(uint8(Commands.PERMIT2_TRANSFER_FROM), uint8(Commands.WRAP_UNWRAP_FEW_TOKEN));
+        bytes[] memory inputs = new bytes[](2);
+        inputs[0] = abi.encode(wrappedToken, Constants.ADDRESS_THIS, amount);
+        inputs[1] = abi.encode(wrappedToken, Constants.MSG_SENDER, amount, false);
+
+        vm.prank(TRADER);
+        router.execute(commands, inputs);
+
+        assertEq(ERC20(token).balanceOf(TRADER) - tokenBalance0, amount);
     }
 }
