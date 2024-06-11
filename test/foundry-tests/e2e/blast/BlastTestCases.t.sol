@@ -179,6 +179,23 @@ contract BlastTestCases is BlastTestBase {
         );
     }
 
+
+    function test_V3RingswapExactIn() public {
+        runV2V3SingleSwap(
+            false,  // isV2
+            true,  // isExactIn
+            uint(UniswapV3ForkNames.Ringswap),
+            WETH,  // inputTokenAddress
+            USDB,  // outputTokenAddress
+            3000,  // UniswapV3 fee tier
+            1e15,  // amountIn,
+            3.687e18,  // amountOutMinimum
+            TRADER,  // recipientAddress
+            ''  // expectedError
+        );
+    }
+
+
     function test_wrapFewToken() public {
 
         address token = WETH;
