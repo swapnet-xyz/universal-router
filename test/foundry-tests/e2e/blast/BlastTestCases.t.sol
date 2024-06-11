@@ -103,6 +103,22 @@ contract BlastTestCases is BlastTestBase {
     }
 
 
+    function test_V2RingswapExactIn() public {
+        runV2V3SingleSwap(
+            true,  // isV2
+            true,  // isExactIn
+            uint(UniswapV2ForkNames.Ringswap),
+            WETH,  // inputTokenAddress
+            USDB,  // outputTokenAddress
+            100,  // UniswapV3 fee tier, not used
+            1e15,  // amountIn,
+            3.775e18,  // amountOutMinimum
+            TRADER,  // recipientAddress
+            ''  // expectedError
+        );
+    }
+
+
     function test_V3UniswapExactIn() public {
         runV2V3SingleSwap(
             false,  // isV2
