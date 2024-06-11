@@ -7,6 +7,7 @@ import {UniversalRouter} from '../../../../contracts/UniversalRouter.sol';
 import {UniswapV2ForkNames, UniswapV3ForkNames} from '../../../../contracts/modules/uniswap/UniswapImmutables.sol';
 import {Commands} from '../../../../contracts/libraries/Commands.sol';
 import {RouterTestHelper} from "../../RouterTestHelper.sol";
+import {Constants} from '../../../../contracts/libraries/Constants.sol';
 import {IFewFactory} from '../../../../contracts/interfaces/external/IFewFactory.sol';
 
 interface IWETH {
@@ -96,6 +97,10 @@ contract BlastTestBase is RouterTestHelper {
         return uint8(Commands.V3_SWAP_EXACT_OUT);
     }
 
+    function isRingswap(bool isV2, uint forkName) pure internal returns (bool) {
+        return (isV2 && forkName == uint(UniswapV2ForkNames.Ringswap)) || (!isV2 && forkName == uint(UniswapV3ForkNames.Ringswap));
+    }
+
     function runV2V3SingleSwap(
         bool isV2,
         bool isExactIn,
@@ -108,36 +113,66 @@ contract BlastTestBase is RouterTestHelper {
         address recipientAddress,
         bytes memory expectedError
     ) internal {
+        bool isRingswap = isRingswap(isV2, forkName);
+
         prepareUserAccountWithToken(inputToken, TRADER, amountIn, address(router));
 
         uint inputTokenBalance0 = ERC20(inputToken).balanceOf(TRADER);
         uint outputTokenBalance0 = ERC20(outputToken).balanceOf(TRADER);
 
-        bytes memory commands = abi.encodePacked(getCommand(isV2, isExactIn));
+        address inputTokenOrWrapped = inputToken;
+        address outputTokenOrWrapped = outputToken;
+        if (isRingswap) {
+            inputTokenOrWrapped = fewFactory.getWrappedToken(inputToken);
+            outputTokenOrWrapped = fewFactory.getWrappedToken(outputToken);
+            recipientAddress = Constants.ADDRESS_THIS;
+        }
 
-        bytes[] memory inputs = new bytes[](1);
+        uint8 command = getCommand(isV2, isExactIn);
+        bytes memory input;
         if (isV2) {
             address[] memory path = new address[](2);
-            path[0] = inputToken;
-            path[1] = outputToken;
+            path[0] = inputTokenOrWrapped;
+            path[1] = outputTokenOrWrapped;
 
             if (isExactIn) {
-                inputs[0] = abi.encode(recipientAddress, amountIn, amountOut, path, true, forkName);
+                input = abi.encode(recipientAddress, amountIn, amountOut, path, !isRingswap, forkName);
             }
             else {
-                inputs[0] = abi.encode(recipientAddress, amountOut, amountIn, path, true, forkName);
+                input = abi.encode(recipientAddress, amountOut, amountIn, path, !isRingswap, forkName);
             }
         }
         else {
             bytes memory path;
             if (isExactIn) {
-                path = abi.encodePacked(inputToken, v3FeeTier, outputToken);
-                inputs[0] = abi.encode(recipientAddress, amountIn, amountOut, path, true, forkName);
+                path = abi.encodePacked(inputTokenOrWrapped, v3FeeTier, outputTokenOrWrapped);
+                input = abi.encode(recipientAddress, amountIn, amountOut, path, !isRingswap, forkName);
             }
             else {
-                path = abi.encodePacked(outputToken, v3FeeTier, inputToken);
-                inputs[0] = abi.encode(recipientAddress, amountOut, amountIn, path, true, forkName);
+                path = abi.encodePacked(outputTokenOrWrapped, v3FeeTier, inputTokenOrWrapped);
+                input = abi.encode(recipientAddress, amountOut, amountIn, path, !isRingswap, forkName);
             }
+        }
+
+        bytes memory commands;
+        bytes[] memory inputs;
+        if (isRingswap) {
+            commands = abi.encodePacked(
+                            uint8(Commands.PERMIT2_TRANSFER_FROM),
+                            uint8(Commands.WRAP_UNWRAP_FEW_TOKEN),
+                            command,
+                            uint8(Commands.WRAP_UNWRAP_FEW_TOKEN)
+                        );
+            inputs = new bytes[](4);
+            inputs[0] = abi.encode(inputToken, Constants.ADDRESS_THIS, amountIn);
+            inputs[1] = abi.encode(inputToken, Constants.ADDRESS_THIS, amountIn, true);
+            inputs[2] = input;
+            inputs[3] = abi.encode(outputTokenOrWrapped, Constants.MSG_SENDER, amountOut, false);
+        }
+        else {
+            commands = abi.encodePacked(command);
+            inputs = new bytes[](1);
+            inputs[0] = input;
         }
 
         if (expectedError.length > 0) {
