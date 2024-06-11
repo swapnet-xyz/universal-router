@@ -113,7 +113,7 @@ contract BlastTestBase is RouterTestHelper {
         address recipientAddress,
         bytes memory expectedError
     ) internal {
-        bool isRingswap = isRingswap(isV2, forkName);
+        bool isRing = isRingswap(isV2, forkName);
 
         prepareUserAccountWithToken(inputToken, TRADER, amountIn, address(router));
 
@@ -122,7 +122,7 @@ contract BlastTestBase is RouterTestHelper {
 
         address inputTokenOrWrapped = inputToken;
         address outputTokenOrWrapped = outputToken;
-        if (isRingswap) {
+        if (isRing) {
             inputTokenOrWrapped = fewFactory.getWrappedToken(inputToken);
             outputTokenOrWrapped = fewFactory.getWrappedToken(outputToken);
             recipientAddress = Constants.ADDRESS_THIS;
@@ -136,27 +136,27 @@ contract BlastTestBase is RouterTestHelper {
             path[1] = outputTokenOrWrapped;
 
             if (isExactIn) {
-                input = abi.encode(recipientAddress, amountIn, amountOut, path, !isRingswap, forkName);
+                input = abi.encode(recipientAddress, amountIn, amountOut, path, !isRing, forkName);
             }
             else {
-                input = abi.encode(recipientAddress, amountOut, amountIn, path, !isRingswap, forkName);
+                input = abi.encode(recipientAddress, amountOut, amountIn, path, !isRing, forkName);
             }
         }
         else {
             bytes memory path;
             if (isExactIn) {
                 path = abi.encodePacked(inputTokenOrWrapped, v3FeeTier, outputTokenOrWrapped);
-                input = abi.encode(recipientAddress, amountIn, amountOut, path, !isRingswap, forkName);
+                input = abi.encode(recipientAddress, amountIn, amountOut, path, !isRing, forkName);
             }
             else {
                 path = abi.encodePacked(outputTokenOrWrapped, v3FeeTier, inputTokenOrWrapped);
-                input = abi.encode(recipientAddress, amountOut, amountIn, path, !isRingswap, forkName);
+                input = abi.encode(recipientAddress, amountOut, amountIn, path, !isRing, forkName);
             }
         }
 
         bytes memory commands;
         bytes[] memory inputs;
-        if (isRingswap) {
+        if (isRing) {
             commands = abi.encodePacked(
                             uint8(Commands.PERMIT2_TRANSFER_FROM),
                             uint8(Commands.WRAP_UNWRAP_FEW_TOKEN),

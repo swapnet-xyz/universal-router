@@ -48,7 +48,8 @@ abstract contract V3SwapRouter is UniswapImmutables, Permit2Payments, IUniswapV3
 
         if (
             computePoolAddress(UniswapV3ForkNames.Uniswap, tokenIn, tokenOut, fee) != msg.sender &&
-            computePoolAddress(UniswapV3ForkNames.Thruster, tokenIn, tokenOut, fee) != msg.sender
+            computePoolAddress(UniswapV3ForkNames.Thruster, tokenIn, tokenOut, fee) != msg.sender &&
+            computePoolAddress(UniswapV3ForkNames.Ringswap, tokenIn, tokenOut, fee) != msg.sender
         ) {
             revert V3InvalidCaller();
         }
