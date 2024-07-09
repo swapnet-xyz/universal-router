@@ -65,6 +65,10 @@ abstract contract V2SwapRouter is UniswapImmutables, Permit2Payments {
         if (
             amountIn != Constants.ALREADY_PAID // amountIn of 0 to signal that the pair already has the tokens
         ) {
+            // use amountIn == Constants.CONTRACT_BALANCE as a flag to swap the entire balance of the contract
+            if (amountIn == Constants.CONTRACT_BALANCE) {
+                amountIn = ERC20(path[0]).balanceOf(address(this));
+            }
             payOrPermit2Transfer(path[0], payer, firstPair, amountIn);
         }
 
