@@ -72,6 +72,8 @@
     "symlink": "ln -s ./lib/solmate ./solmate && ln -s ./lib/permit2 ./permit2",
     "prettier:fix": "prettier --write '**/*.ts' && prettier --write '**/*.json'",
     "lint:fix": "yarn prettier:fix && forge fmt",
-    "prettier": "prettier --check '**/*.ts' && forge fmt --check"
+    "prettier": "prettier --check '**/*.ts' && forge fmt --check",
+    "build": "pnpm compile",
+    "clean": "rm -rf node_modules dist"
   }
 }
