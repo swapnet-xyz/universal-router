@@ -26,10 +26,10 @@ export default {
   networks: {
     hardhat: {
       allowUnlimitedContractSize: false,
-      chainId: 1,
+      chainId: 81457,
       forking: {
-        url: `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
-        blockNumber: 15360000,
+        url: `https://rpc.blast.io`,
+        blockNumber: 5875172,
       },
       accounts: {
           count: 10
