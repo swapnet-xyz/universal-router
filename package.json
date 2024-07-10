@@ -24,6 +24,7 @@
     "contracts",
     "typechain",
     "artifacts/contracts/**/*.json",
+    "artifacts/routerDeployedBytecode.json",
     "!artifacts/contracts/**/*.dbg.json",
     "!artifacts/contracts/test/**/*",
     "!artifacts/contracts/base/**/*"
@@ -74,6 +75,6 @@
     "lint:fix": "yarn prettier:fix && forge fmt",
     "prettier": "prettier --check '**/*.ts' && forge fmt --check",
     "build": "hardhat compile && hardhat run --no-compile script/readDeployBytecode.ts",
-    "clean": "rm -rf node_modules dist"
+    "clean": "rm -rf node_modules dist out cache artifacts typechain"
   }
 }
