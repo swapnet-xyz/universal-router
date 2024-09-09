@@ -74,8 +74,7 @@
     "prettier:fix": "prettier --write '**/*.ts' && prettier --write '**/*.json'",
     "lint:fix": "yarn prettier:fix && forge fmt",
     "prettier": "prettier --check '**/*.ts' && forge fmt --check",
-    "build-toFix": "hardhat compile && hardhat run --no-compile script/readDeployBytecode.ts",
-    "build": "hardhat compile",
+    "build": "hardhat compile && hardhat run --no-compile script/readDeployBytecode.ts",
     "clean": "rm -rf node_modules dist out cache artifacts typechain"
   }
 }
