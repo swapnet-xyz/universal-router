@@ -6,6 +6,7 @@ import 'forge-std/Script.sol';
 import {RouterParameters} from 'contracts/base/RouterImmutables.sol';
 import {UnsupportedProtocol} from 'contracts/deploy/UnsupportedProtocol.sol';
 import {UniversalRouter} from 'contracts/UniversalRouter.sol';
+import {AdminUpgradeabilityProxy} from 'contracts/upgradeability/AdminUpgradeabilityProxy.sol';
 import {Permit2} from 'permit2/src/Permit2.sol';
 
 bytes32 constant SALT = bytes32(uint256(0x00000000000000000000000000000000000000005eb67581652632000a6cbedf));
@@ -72,8 +73,14 @@ abstract contract DeployUniversalRouter is Script {
 
         logParams();
 
-        router = new UniversalRouter(params);
+        UniversalRouter routerImplementation = new UniversalRouter(params);
+        console2.log('Universal Router Implementation Deployed:', address(routerImplementation));
+
+        AdminUpgradeabilityProxy proxy = new AdminUpgradeabilityProxy(address(routerImplementation));
+        router = UniversalRouter(payable(proxy));
         console2.log('Universal Router Deployed:', address(router));
+
+        router.init();
         vm.stopBroadcast();
     }
 
@@ -97,6 +104,18 @@ abstract contract DeployUniversalRouter is Script {
         console2.log('looksRareToken:', params.looksRareToken);
         console2.log('v2Factory:', params.v2Factory);
         console2.log('v3Factory:', params.v3Factory);
+        console2.log('pairInitCodeHash:', params.pairInitCodeHash);
+        console2.log('poolInitCodeHash:', params.poolInitCodeHash);
+        console2.log('v2Thruster3kFactory:', params.v2Thruster3kFactory);
+        console2.log('v2Thruster10kFactory:', params.v2Thruster10kFactory);
+        console2.log('v3ThrusterFactory:', params.v3ThrusterFactory);
+        console2.log('v2Thruster3kPairInitCodeHash:', params.v2Thruster3kPairInitCodeHash);
+        console2.log('v2Thruster10kPairInitCodeHash:', params.v2Thruster10kPairInitCodeHash);
+        console2.log('v3ThrusterPoolInitCodeHash:', params.v3ThrusterPoolInitCodeHash);
+        console2.log('v2RingswapFactory:', params.v2RingswapFactory);
+        console2.log('v3RingswapFactory:', params.v3RingswapFactory);
+        console2.log('v2RingswapPairInitCodeHash:', params.v2RingswapPairInitCodeHash);
+        console2.log('v3RingswapPoolInitCodeHash:', params.v3RingswapPoolInitCodeHash);
     }
 
     function mapUnsupported(address protocol) internal view returns (address) {
