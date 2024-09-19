@@ -14,6 +14,7 @@ bytes32 constant SALT = bytes32(uint256(0x00000000000000000000000000000000000000
 abstract contract DeployUniversalRouter is Script {
     RouterParameters internal params;
     address internal unsupported;
+    address internal routerProxyAddress;
 
     address constant UNSUPPORTED_PROTOCOL = address(0);
     bytes32 constant BYTES32_ZERO = bytes32(0);
@@ -80,6 +81,17 @@ abstract contract DeployUniversalRouter is Script {
         router = UniversalRouter(payable(proxy));
         console2.log('Universal Router Deployed:', address(router));
 
+        vm.stopBroadcast();
+    }
+
+    function init() external returns (UniversalRouter router) {
+
+        if (routerProxyAddress == address(0)) {
+            revert('Router proxy address not set');
+        }
+
+        vm.startBroadcast();
+        router = UniversalRouter(payable(routerProxyAddress));
         router.init();
         vm.stopBroadcast();
     }
@@ -104,18 +116,18 @@ abstract contract DeployUniversalRouter is Script {
         console2.log('looksRareToken:', params.looksRareToken);
         console2.log('v2Factory:', params.v2Factory);
         console2.log('v3Factory:', params.v3Factory);
-        console2.log('pairInitCodeHash:', params.pairInitCodeHash);
-        console2.log('poolInitCodeHash:', params.poolInitCodeHash);
+        console2.logBytes32(params.pairInitCodeHash);
+        console2.logBytes32(params.poolInitCodeHash);
         console2.log('v2Thruster3kFactory:', params.v2Thruster3kFactory);
         console2.log('v2Thruster10kFactory:', params.v2Thruster10kFactory);
         console2.log('v3ThrusterFactory:', params.v3ThrusterFactory);
-        console2.log('v2Thruster3kPairInitCodeHash:', params.v2Thruster3kPairInitCodeHash);
-        console2.log('v2Thruster10kPairInitCodeHash:', params.v2Thruster10kPairInitCodeHash);
-        console2.log('v3ThrusterPoolInitCodeHash:', params.v3ThrusterPoolInitCodeHash);
+        console2.logBytes32(params.v2Thruster3kPairInitCodeHash);
+        console2.logBytes32(params.v2Thruster10kPairInitCodeHash);
+        console2.logBytes32(params.v3ThrusterPoolInitCodeHash);
         console2.log('v2RingswapFactory:', params.v2RingswapFactory);
         console2.log('v3RingswapFactory:', params.v3RingswapFactory);
-        console2.log('v2RingswapPairInitCodeHash:', params.v2RingswapPairInitCodeHash);
-        console2.log('v3RingswapPoolInitCodeHash:', params.v3RingswapPoolInitCodeHash);
+        console2.logBytes32(params.v2RingswapPairInitCodeHash);
+        console2.logBytes32(params.v3RingswapPoolInitCodeHash);
     }
 
     function mapUnsupported(address protocol) internal view returns (address) {

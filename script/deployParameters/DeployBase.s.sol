@@ -41,5 +41,8 @@ contract DeployBase is DeployUniversalRouter {
         });
 
         unsupported = 0x9E18Efb3BE848940b0C92D300504Fb08C287FE85;
+
+        // Set the router proxy address after deployment, for initialization purposes
+        routerProxyAddress = 0x1f352ecdc178ef919849EeaA6ad3301337fb9CFB;
     }
 }
