@@ -41,5 +41,7 @@ contract DeployArbitrum is DeployUniversalRouter {
         });
 
         unsupported = 0xEf1c6E67703c7BD7107eed8303Fbe6EC2554BF6B;
+
+        routerProxyAddress = 0x59BF0A0823D79bd3a3082Fb8Bd953828ed36EA12;
     }
 }
