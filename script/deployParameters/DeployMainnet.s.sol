@@ -41,5 +41,7 @@ contract DeployMainnet is DeployUniversalRouter {
         });
 
         unsupported = 0x76D631990d505E4e5b432EEDB852A60897824D68;
+
+        routerProxyAddress = 0x907F8f9BD32549F874e50608cF96829f1D851909;
     }
 }
