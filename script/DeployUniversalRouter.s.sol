@@ -69,7 +69,9 @@ abstract contract DeployUniversalRouter is Script {
             v2RingswapFactory: mapUnsupported(params.v2RingswapFactory),
             v3RingswapFactory: mapUnsupported(params.v3RingswapFactory),
             v2RingswapPairInitCodeHash: params.v2RingswapPairInitCodeHash,
-            v3RingswapPoolInitCodeHash: params.v3RingswapPoolInitCodeHash
+            v3RingswapPoolInitCodeHash: params.v3RingswapPoolInitCodeHash,
+            feeCollector: params.feeCollector,
+            feeBips: params.feeBips
         });
 
         logParams();

@@ -37,7 +37,9 @@ contract DeployOptimism is DeployUniversalRouter {
             v2RingswapFactory: UNSUPPORTED_PROTOCOL,
             v3RingswapFactory: UNSUPPORTED_PROTOCOL,
             v2RingswapPairInitCodeHash: BYTES32_ZERO,
-            v3RingswapPoolInitCodeHash: BYTES32_ZERO
+            v3RingswapPoolInitCodeHash: BYTES32_ZERO,
+            feeCollector: 0x9cb8d9BaE84830b7f5F11ee5048c04a80b8514BA,
+            feeBips: 0
         });
 
         unsupported = 0x40d51104Da22E3e77b683894E7e3E12e8FC61E65;

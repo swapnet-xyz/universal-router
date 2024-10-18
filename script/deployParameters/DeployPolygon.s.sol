@@ -37,7 +37,9 @@ contract DeployPolygon is DeployUniversalRouter {
             v2RingswapFactory: UNSUPPORTED_PROTOCOL,
             v3RingswapFactory: UNSUPPORTED_PROTOCOL,
             v2RingswapPairInitCodeHash: BYTES32_ZERO,
-            v3RingswapPoolInitCodeHash: BYTES32_ZERO
+            v3RingswapPoolInitCodeHash: BYTES32_ZERO,
+            feeCollector: 0x9cb8d9BaE84830b7f5F11ee5048c04a80b8514BA,
+            feeBips: 0
         });
 
         unsupported = 0xEf1c6E67703c7BD7107eed8303Fbe6EC2554BF6B;

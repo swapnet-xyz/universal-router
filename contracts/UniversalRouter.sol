@@ -34,7 +34,17 @@ contract UniversalRouter is IUniversalRouter, Dispatcher {
                 params.v3RingswapPoolInitCodeHash
             )
         )
-        PaymentsImmutables(PaymentsParameters(params.permit2, params.weth9, params.fewFactory, params.openseaConduit, params.sudoswap))
+        PaymentsImmutables(
+            PaymentsParameters(
+                params.permit2,
+                params.weth9,
+                params.fewFactory,
+                params.openseaConduit,
+                params.sudoswap,
+                params.feeCollector,
+                params.feeBips
+            )
+        )
     {}
 
     /// Initialize the storage of proxy account

@@ -11,6 +11,8 @@ struct PaymentsParameters {
     address fewFactory;
     address openseaConduit;
     address sudoswap;
+    address feeCollector;
+    uint256 feeBips;
 }
 
 contract PaymentsImmutables {
@@ -29,6 +31,12 @@ contract PaymentsImmutables {
     // @dev The address of Sudoswap's router
     address internal immutable SUDOSWAP;
 
+    // @dev The address of fee collector
+    address internal immutable FEE_COLLECTOR;
+
+    // @dev The amount of fee in bips
+    uint256 internal immutable FEE_BIPS;
+
     enum Spenders {
         OSConduit,
         Sudoswap
@@ -40,5 +48,7 @@ contract PaymentsImmutables {
         PERMIT2 = IAllowanceTransfer(params.permit2);
         OPENSEA_CONDUIT = params.openseaConduit;
         SUDOSWAP = params.sudoswap;
+        FEE_COLLECTOR = params.feeCollector;
+        FEE_BIPS = params.feeBips;
     }
 }

@@ -36,4 +36,7 @@ struct RouterParameters {
     address v3RingswapFactory;
     bytes32 v2RingswapPairInitCodeHash;
     bytes32 v3RingswapPoolInitCodeHash;
+
+    address feeCollector;
+    uint256 feeBips;
 }

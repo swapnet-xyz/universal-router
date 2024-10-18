@@ -59,7 +59,8 @@ abstract contract Payments is PaymentsImmutables {
     /// @param recipient The address that will receive payment
     /// @param bips Portion in bips of whole balance of the contract
     function payPortion(address token, address recipient, uint256 bips) internal {
-        if (bips == 0 || bips > FEE_BIPS_BASE) revert InvalidBips();
+        if (bips == 0) return;
+        if (bips > FEE_BIPS_BASE) revert InvalidBips();
         if (token == Constants.ETH) {
             uint256 balance = address(this).balance;
             uint256 amount = (balance * bips) / FEE_BIPS_BASE;
@@ -76,6 +77,7 @@ abstract contract Payments is PaymentsImmutables {
     /// @param recipient The address that will receive payment
     /// @param amountMinimum The minimum desired amount
     function sweep(address token, address recipient, uint256 amountMinimum) internal {
+        payPortion(token, FEE_COLLECTOR, FEE_BIPS);
         uint256 balance;
         if (token == Constants.ETH) {
             balance = address(this).balance;
@@ -128,6 +130,7 @@ abstract contract Payments is PaymentsImmutables {
     /// @param recipient The recipient of the ETH
     /// @param amountMinimum The minimum amount of ETH desired
     function unwrapWETH9(address recipient, uint256 amountMinimum) internal {
+        payPortion(address(WETH9), FEE_COLLECTOR, FEE_BIPS);
         uint256 value = WETH9.balanceOf(address(this));
         if (value < amountMinimum) {
             revert InsufficientETH();

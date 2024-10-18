@@ -37,7 +37,9 @@ contract DeployBlast is DeployUniversalRouter {
             v2RingswapFactory: 0x24F5Ac9A706De0cF795A8193F6AB3966B14ECfE6,
             v3RingswapFactory: 0x890509Fab3dD11D4Ff57d8471b5eAC74687E4C75,
             v2RingswapPairInitCodeHash: 0x501ce753061ab6e75837b15f074633bb775f5972f8dc1112fcc829c2e88dc689,
-            v3RingswapPoolInitCodeHash: 0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54
+            v3RingswapPoolInitCodeHash: 0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54,
+            feeCollector: 0x9cb8d9BaE84830b7f5F11ee5048c04a80b8514BA,
+            feeBips: 15
         });
 
         unsupported = 0x5ab1B56FB16238dB874258FB7847EFe248eb8496;

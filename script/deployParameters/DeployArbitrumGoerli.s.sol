@@ -37,7 +37,9 @@ contract DeployArbitrumGoerli is DeployUniversalRouter {
             v2RingswapFactory: UNSUPPORTED_PROTOCOL,
             v3RingswapFactory: UNSUPPORTED_PROTOCOL,
             v2RingswapPairInitCodeHash: BYTES32_ZERO,
-            v3RingswapPoolInitCodeHash: BYTES32_ZERO
+            v3RingswapPoolInitCodeHash: BYTES32_ZERO,
+            feeCollector: 0x9cb8d9BaE84830b7f5F11ee5048c04a80b8514BA,
+            feeBips: 0
         });
 
         unsupported = 0x5302086A3a25d473aAbBd0356eFf8Dd811a4d89B;

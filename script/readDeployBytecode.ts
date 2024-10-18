@@ -42,6 +42,8 @@ export const generateRouterBytecodeWithImmutablesAsync = async (): Promise<{ dep
         v3RingswapFactory: "0x890509Fab3dD11D4Ff57d8471b5eAC74687E4C75",
         v2RingswapPairInitCodeHash: "0x501ce753061ab6e75837b15f074633bb775f5972f8dc1112fcc829c2e88dc689",
         v3RingswapPoolInitCodeHash: "0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54",
+        feeCollector: "0x9cb8d9BaE84830b7f5F11ee5048c04a80b8514BA",
+        feeBips: 0
     };
 
     const routerFactory = await hre.ethers.getContractFactory('UniversalRouter');
