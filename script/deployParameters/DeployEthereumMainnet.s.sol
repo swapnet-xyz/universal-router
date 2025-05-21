@@ -34,9 +34,9 @@ contract DeployMainnet is DeployUniversalRouter {
             v2Thruster3kPairInitCodeHash: BYTES32_ZERO,
             v2Thruster10kPairInitCodeHash: BYTES32_ZERO,
             v3ThrusterPoolInitCodeHash: BYTES32_ZERO,
-            v2RingswapFactory: UNSUPPORTED_PROTOCOL,
+            v2RingswapFactory: 0xeb2A625B704d73e82946D8d026E1F588Eed06416,
             v3RingswapFactory: UNSUPPORTED_PROTOCOL,
-            v2RingswapPairInitCodeHash: BYTES32_ZERO,
+            v2RingswapPairInitCodeHash: 0xa7ae6a5ec37f0c21bbdac560794258c4089b8ae3ffa6e3909b53c6091764a676,
             v3RingswapPoolInitCodeHash: BYTES32_ZERO
         });
 

@@ -77,10 +77,20 @@ abstract contract DeployUniversalRouter is Script {
         UniversalRouter routerImplementation = new UniversalRouter(params);
         console2.log('Universal Router Implementation Deployed:', address(routerImplementation));
 
-        AdminUpgradeabilityProxy proxy = new AdminUpgradeabilityProxy(address(routerImplementation));
-        router = UniversalRouter(payable(proxy));
-        console2.log('Universal Router Deployed:', address(router));
 
+        if (routerProxyAddress != address(0)) {
+            AdminUpgradeabilityProxy proxy = AdminUpgradeabilityProxy(payable(routerProxyAddress));
+            proxy.upgradeTo(address(routerImplementation));
+            console2.log('Universal Router Proxy upgraded:', address(proxy));
+        }
+
+        vm.stopBroadcast();
+    }
+
+    function deployProxy(address routerImplementation) external returns (AdminUpgradeabilityProxy proxy) {
+        vm.startBroadcast();
+        proxy = new AdminUpgradeabilityProxy(routerImplementation);
+        console2.log('Universal Router Proxy Deployed:', address(proxy));
         vm.stopBroadcast();
     }
 
