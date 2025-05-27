@@ -9,7 +9,7 @@ contract DeployMainnet is DeployUniversalRouter {
         params = RouterParameters({
             permit2: 0x000000000022D473030F116dDEE9F6B43aC78BA3,
             weth9: 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2,
-            fewFactory: UNSUPPORTED_PROTOCOL,
+            fewFactory: 0x7D86394139bf1122E82FDF45Bb4e3b038A4464DD,
             seaportV1_5: UNSUPPORTED_PROTOCOL,
             seaportV1_4: UNSUPPORTED_PROTOCOL,
             openseaConduit: UNSUPPORTED_PROTOCOL,
